@@ -1,86 +1,43 @@
-# MedTutor ECN - Site en ligne ! 🚀
+# MedTutor ECN - Tuteur Médical IA
 
-## ✅ Déploiement réussi !
-
-**Repository:** https://github.com/ia2213/med-tutor-ecn
+## 🌐 Site en ligne
 
 **GitHub Pages:** https://ia2213.github.io/med-tutor-ecn/
 
+**Repository:** https://github.com/ia2213/med-tutor-ecn
+
 ---
 
-## 🌐 Votre site est maintenant en ligne !
+## ✅ Déploiement terminé !
 
-Le site est déployé sur GitHub Pages.
+Votre site MedTutor ECN est maintenant en ligne !
 
 **URL:** https://ia2213.github.io/med-tutor-ecn/
 
 ---
 
+## 🎯 Fonctionnalités
+
+- ✅ Page d'accueil interactive
+- ✅ 16 spécialités ECN R2C
+- ✅ Design responsive
+- ✅ Liens vers le code source
+
+---
+
 ## 📊 Statut
 
-| Composant | Statut |
-|-----------|--------|
-| GitHub Repository | ✅ Pushé |
-| GitHub Pages | ✅ Déployé |
-| Workflow Actions | ✅ Terminé |
+| Service | URL | Statut |
+|---------|-----|--------|
+| **GitHub Pages** | https://ia2213.github.io/med-tutor-ecn/ | ✅ En ligne |
+| **GitHub Repo** | https://github.com/ia2213/med-tutor-ecn | ✅ Pushé |
 
 ---
 
 ## 🔧 Pour le chat IA (version complète)
 
-La version GitHub Pages est **statique** - le chat nécessite une API.
-
-### Option 1: Déployer sur Vercel (recommandé)
-
-1. Allez sur **https://vercel.com/new**
-2. Importez votre repository **ia2213/med-tutor-ecn**
-3. Cliquez **Deploy**
-4. Ajoutez la variable d'environnement:
-   - `OPENAI_API_KEY` = votre clé API OpenAI
-
-### Option 2: Utiliser GitHub Pages + API externe
-
-Vous pouvez utiliser l'API de DeepTutor directement:
-- https://deeptutor.info/
-- Configurez votre clé API dans le code
+La version GitHub Pages est **statique**. Pour le chat IA complet, déployez sur **Vercel**.
 
 ---
 
-## 📁 Structure du projet
-
-```
-med-tutor-ecn/
-├── index.html          # Page d'accueil GitHub Pages
-└── (code source sur GitHub)
-```
-
----
-
-## 🎯 Fonctionnalités
-
-- ✅ Upload de PDF
-- ✅ 16 spécialités ECN R2C
-- ✅ Interface chat
-- ✅ Design responsive
-- ✅ Déploiement automatique
-
----
-
-## 🔑 Pour activer le chat IA
-
-Ajoutez votre clé API OpenAI:
-
-```bash
-# Dans Vercel (recommandé)
-# Settings → Environment Variables
-OPENAI_API_KEY=sk-***
-
-# Ou dans .env.local (local)
-OPENAI_API_KEY=sk-***
-OPENAI_BASE_URL=https://api.openai.com/v1
-MODEL=gpt-4o-mini
-```
-
----
-
-**Votre site est en ligne ! 🎉**
+**Propulsé par DeepTutor + book-to-skill**
