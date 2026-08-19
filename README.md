@@ -1,6 +1,6 @@
 # MedTutor ECN - Tuteur Médical IA
 
-## 🌐 Site en ligne
+## 🌐 Site en ligne !
 
 **GitHub Pages:** https://ia2213.github.io/med-tutor-ecn/
 
