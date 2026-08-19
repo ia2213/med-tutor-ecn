@@ -36,10 +36,14 @@ Le site est déployé sur **GitHub Pages** et fonctionne parfaitement !
 
 Si vous voulez déployer sur Vercel:
 
-1. Allez sur **https://vercel.com/new**
-2. Importez le repo **ia2213/med-tutor-ecn**
-3. **Root Directory:** laissez vide (ou mettez `/`)
-4. Cliquez **Deploy**
+1. Allez sur **https://vercel.com/dashboard**
+2. Cliquez sur votre projet **med-tutor-ecn**
+3. Allez dans **Settings → General**
+4. **Root Directory:** changez de `med-tutor` à `/`
+5. Cliquez **Save**
+6. Allez dans **Deployments → Redeploy**
+
+Ou supprimez le projet et recréez-le avec le bon répertoire racine.
 
 ---
 
