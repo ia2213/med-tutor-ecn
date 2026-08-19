@@ -1,51 +1,96 @@
-# MedTutor ECN - Tuteur Médical IA pour l'ECN Français
+# MedTutor ECN - Site en ligne ! 🚀
 
-Un site web pour tutorer les étudiants en médecine préparant l'ECN (Épreuves Classantes Nationales) en France.
+## ✅ Déploiement réussi !
 
-## Fonctionnalités
+**Repository:** https://github.com/ia2213/med-tutor-ecn
 
-- **Upload de livres PDF** - Analysez vos manuels de médecine
-- **Chat IA** - Posez des questions et recevez des réponses
-- **Spécialités ECN R2C** - 16 pré-réglages pour les matières clés
-- **DeepTutor + book-to-skill** - Technologie open-source
+**GitHub Pages:** https://ia2213.github.io/med-tutor-ecn/
 
-## Déploiement
+---
 
-### Option 1: Vercel (Recommandé - avec API)
-```bash
-# Déployer sur Vercel
-vercel --prod
+## 🌐 Votre site est maintenant en ligne !
+
+Le site est déployé sur GitHub Pages avec le workflow automatique.
+
+**URL:** https://ia2213.github.io/med-tutor-ecn/
+
+---
+
+## 📊 Statut
+
+| Composant | Statut |
+|-----------|--------|
+| GitHub Repository | ✅ Pushé |
+| GitHub Pages | ✅ Déployé |
+| Workflow Actions | ✅ Terminé |
+
+---
+
+## 🔧 Pour le chat IA (version complète)
+
+La version GitHub Pages est **statique** - le chat nécessite une API.
+
+### Option 1: Déployer sur Vercel (recommandé)
+
+1. Allez sur **https://vercel.com/new**
+2. Importez votre repository **ia2213/med-tutor-ecn**
+3. Cliquez **Deploy**
+4. Ajoutez la variable d'environnement:
+   - `OPENAI_API_KEY` = votre clé API OpenAI
+
+### Option 2: Utiliser GitHub Pages + API externe
+
+Vous pouvez utiliser l'API de DeepTutor directement:
+- https://deeptutor.info/
+- Configurez votre clé API dans le code
+
+---
+
+## 📁 Structure du projet
+
 ```
-Configurer les variables d'environnement dans Vercel:
-- `OPENAI_API_KEY`
-- `OPENAI_BASE_URL` (optionnel)
-- `MODEL` (optionnel)
-
-### Option 2: GitHub Pages (Statique)
-```bash
-# Build statique
-npm run build
-# Le dossier out/ contient le site statique
-# Uploadez sur GitHub Pages
+med-tutor/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx      # Interface principale
+│   │   ├── globals.css   # Styles
+│   │   └── layout.tsx    # Layout
+│   └── lib/
+│       ├── ecn-presets.ts    # 16 spécialités ECN
+│       ├── pdf-extractor.ts  # Parsing PDF
+│       └── chat-api.ts       # API LLM
+├── .github/workflows/
+│   └── deploy-pages.yml  # Auto-déploiement
+└── vercel.json           # Config Vercel
 ```
 
-## Configuration
+---
 
-Créez un fichier `.env.local`:
+## 🎯 Fonctionnalités
+
+- ✅ Upload de PDF
+- ✅ 16 spécialités ECN R2C
+- ✅ Interface chat
+- ✅ Design responsive
+- ✅ Déploiement automatique
+
+---
+
+## 🔑 Pour activer le chat IA
+
+Ajoutez votre clé API OpenAI:
+
 ```bash
-OPENAI_API_KEY=your-api-key-here
+# Dans Vercel (recommandé)
+# Settings → Environment Variables
+OPENAI_API_KEY=sk-***
+
+# Ou dans .env.local (local)
+OPENAI_API_KEY=sk-***
 OPENAI_BASE_URL=https://api.openai.com/v1
 MODEL=gpt-4o-mini
 ```
 
-Pour Groq (moins cher):
-```bash
-OPENAI_BASE_URL=https://api.groq.com/openai/v1
-MODEL=llama-3.3-70b-versatile
-```
+---
 
-## Liens
-
-- [DeepTutor](https://github.com/HKUDS/DeepTutor)
-- [book-to-skill](https://github.com/virgiliojr94/book-to-skill)
-- [ECN France](https://www.etudes-et-concours.gouv.fr/)
+**Votre site est en ligne ! 🎉**
