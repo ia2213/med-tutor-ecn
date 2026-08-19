@@ -6,41 +6,40 @@
 
 ---
 
-## ✅ Fonctionnalités
+## ✅ Site fonctionnel
 
-### Chat IA Gratuit (Pollinations.ai)
-- ✅ **100% gratuit** - Pas besoin de clé API
-- ✅ **16 spécialités ECN R2C** - Cardo, Neuro, Pneumo, etc.
-- ✅ **Upload PDF** - Chargez vos livres de médecine
-- ✅ **Réponses en français** - Pédagogique et structuré
+Le site est déployé sur **GitHub Pages** et fonctionne parfaitement !
 
-### Comment utiliser
-1. **Glissez un PDF** ou cliquez pour uploader
-2. **Sélectionnez une spécialité** (ex: Cardiologie)
-3. **Posez vos questions** - L'IA répond avec des explications détaillées
+**URL:** https://ia2213.github.io/med-tutor-ecn/
 
 ---
 
-## 🎯 Spécialités ECN R2C
+## 🎯 Fonctionnalités
 
-| Spécialité | Icône |
-|------------|-------|
-| Cardiologie | ❤️ |
-| Endocrinologie | 🦋 |
-| Neurologie | 🧠 |
-| Pneumologie | 🫁 |
-| Gastro-entérologie | 🫀 |
-| Oncologie | 🎗️ |
-| Maladies infectieuses | 🦠 |
-| Rhumatologie | 🦴 |
-| Néphrologie | 🫘 |
-| Hématologie | 🩸 |
-| Psychiatrie | 🧠 |
-| Pédiatrie | 👶 |
-| Gynécologie-Obstétrique | 🤰 |
-| Urgences & Réanimation | 🚨 |
-| Pharmacologie | 💊 |
-| Biologie médicale | 🔬 |
+- ✅ **Chat IA gratuit** - Utilise Pollinations.ai (pas de clé API)
+- ✅ **16 spécialités ECN R2C** - Toutes les matières couvertes
+- ✅ **Upload PDF** - Chargez vos livres de médecine
+- ✅ **Réponses en français** - Pédagogique et structuré
+
+---
+
+## 📝 Comment utiliser
+
+1. **Allez sur:** https://ia2213.github.io/med-tutor-ecn/
+2. **Glissez un PDF** ou cliquez pour uploader
+3. **Sélectionnez une spécialité** (ex: Cardiologie ❤️)
+4. **Posez vos questions** - L'IA répond gratuitement !
+
+---
+
+## 🔧 Déploiement Vercel
+
+Si vous voulez déployer sur Vercel:
+
+1. Allez sur **https://vercel.com/new**
+2. Importez le repo **ia2213/med-tutor-ecn**
+3. **Root Directory:** laissez vide (ou mettez `/`)
+4. Cliquez **Deploy**
 
 ---
 
@@ -50,15 +49,6 @@
 |---------|-----|--------|
 | **GitHub Pages** | https://ia2213.github.io/med-tutor-ecn/ | ✅ En ligne |
 | **GitHub Repo** | https://github.com/ia2213/med-tutor-ecn | ✅ Pushé |
-
----
-
-## 🚀 Technologies
-
-- **Frontend:** HTML/CSS/JavaScript vanilla
-- **IA:** Pollinations.ai (gratuit, open source)
-- **Hébergement:** GitHub Pages
-- **Upload PDF:** Traitement client-side
 
 ---
 
