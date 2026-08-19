@@ -1,34 +1,53 @@
-# MedTutor ECN - Tuteur Médical IA
+# MedTutor ECN - Tuteur Médical IA 🎓
 
 ## 🌐 Site en ligne !
 
-**GitHub Pages:** https://ia2213.github.io/med-tutor-ecn/
+**URL:** https://ia2213.github.io/med-tutor-ecn/
 
 ---
 
-## ✅ Vercel Fixé !
+## ✅ Déploiement réussi !
 
-Le fichier `vercel.json` a été corrigé.
-
----
-
-## 🔄 Pour déployer sur Vercel
-
-1. Allez sur **https://vercel.com/dashboard**
-2. Cliquez sur **med-tutor-ecn**
-3. **Settings → General**
-4. **Root Directory:** vide ou `/`
-5. **Deployments → Redeploy**
+Le site est maintenant **100% fonctionnel** !
 
 ---
 
 ## 🎯 Fonctionnalités
 
-- ✅ Chat IA gratuit (Pollinations.ai)
-- ✅ 16 spécialités ECN R2C
-- ✅ Upload PDF
-- ✅ Réponses en français
+| Fonctionnalité | Statut |
+|----------------|--------|
+| Page d'accueil | ✅ En ligne |
+| Chat IA (Pollinations.ai) | ✅ Gratuit |
+| 16 spécialités ECN | ✅ Disponibles |
+| Upload PDF | ✅ Fonctionnel |
 
 ---
 
-**Site:** https://ia2213.github.io/med-tutor-ecn/
+## 📝 Comment utiliser
+
+1. **Ouvrez:** https://ia2213.github.io/med-tutor-ecn/
+2. **Upload:** Glissez un PDF ou cliquez
+3. **Spécialité:** Choisissez une matière
+4. **Posez vos questions** - Réponse IA gratuite !
+
+---
+
+## 🔧 Vercel
+
+Pour déployer sur Vercel:
+1. **Settings → General**
+2. **Root Directory:** vide ou `/`
+3. **Deployments → Redeploy**
+
+---
+
+## 📊 Statut
+
+| Service | URL | Statut |
+|---------|-----|--------|
+| **GitHub Pages** | https://ia2213.github.io/med-tutor-ecn/ | ✅ En ligne |
+| **GitHub Repo** | https://github.com/ia2213/med-tutor-ecn | ✅ Pushé |
+
+---
+
+**Propulsé par DeepTutor + book-to-skill** 🚀
