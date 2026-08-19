@@ -1,4 +1,4 @@
-# MedTutor ECN - Tuteur Médical IA 🎓
+# MedTutor ECN - Tuteur Médical IA
 
 ## 🌐 Site en ligne !
 
@@ -6,48 +6,29 @@
 
 ---
 
-## ✅ Déploiement réussi !
+## 🔑 Comment utiliser le chat IA
 
-Le site est maintenant **100% fonctionnel** !
+Le site utilise **votre propre clé API** (pas de clé partagée).
 
----
+### Option 1: OpenAI (recommandé)
+1. Créez un compte sur **https://platform.openai.com**
+2. Obtenez une clé API gratuite (crédits offerts)
+3. Entrez-la dans le site
 
-## 🎯 Fonctionnalités
-
-| Fonctionnalité | Statut |
-|----------------|--------|
-| Page d'accueil | ✅ En ligne |
-| Chat IA (Pollinations.ai) | ✅ Gratuit |
-| 16 spécialités ECN | ✅ Disponibles |
-| Upload PDF | ✅ Fonctionnel |
-
----
-
-## 📝 Comment utiliser
-
-1. **Ouvrez:** https://ia2213.github.io/med-tutor-ecn/
-2. **Upload:** Glissez un PDF ou cliquez
-3. **Spécialité:** Choisissez une matière
-4. **Posez vos questions** - Réponse IA gratuite !
+### Option 2: Groq (gratuit, pas de carte)
+1. Créez un compte sur **https://console.groq.com**
+2. Obtenez une clé API gratuite
+3. Entrez-la dans le site
 
 ---
 
-## 🔧 Vercel
+## ✅ Le site fonctionne !
 
-Pour déployer sur Vercel:
-1. **Settings → General**
-2. **Root Directory:** vide ou `/`
-3. **Deployments → Redeploy**
-
----
-
-## 📊 Statut
-
-| Service | URL | Statut |
-|---------|-----|--------|
-| **GitHub Pages** | https://ia2213.github.io/med-tutor-ecn/ | ✅ En ligne |
-| **GitHub Repo** | https://github.com/ia2213/med-tutor-ecn | ✅ Pushé |
+- ✅ Upload PDF
+- ✅ 16 spécialités ECN R2C
+- ✅ Chat IA avec votre clé API
+- ✅ Clé sauvegardée localement (jamais partagée)
 
 ---
 
-**Propulsé par DeepTutor + book-to-skill** 🚀
+**Ouvrez:** https://ia2213.github.io/med-tutor-ecn/
