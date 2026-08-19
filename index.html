@@ -12,15 +12,6 @@
         .header p { opacity: 0.9; }
         .container { max-width: 900px; margin: 0 auto; padding: 20px; }
         
-        /* API Key Section */
-        .api-section { background: #fff3cd; border: 1px solid #ffc107; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center; }
-        .api-section h3 { margin-bottom: 10px; color: #856404; }
-        .api-section p { color: #856404; margin-bottom: 15px; }
-        .api-input { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        .api-input input { padding: 10px 15px; border: 1px solid #ffc107; border-radius: 8px; width: 300px; font-size: 1em; }
-        .api-input button { padding: 10px 20px; background: #ffc107; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .api-input button:hover { background: #e0a800; }
-        
         /* Upload Section */
         .upload-section { background: white; border-radius: 12px; padding: 30px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .upload-area { border: 2px dashed #dadce0; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; }
@@ -68,21 +59,10 @@
 <body>
     <div class="header">
         <h1>📚 MedTutor ECN</h1>
-        <p>Tuteur médical IA gratuit pour la préparation à l'ECN</p>
+        <p>Tuteur médical IA gratuit - Propulsé par OmniRoute</p>
     </div>
     
     <div class="container">
-        <!-- API Key Section -->
-        <div class="api-section" id="apiSection">
-            <h3>🔑 Configuration de l'API</h3>
-            <p>Pour utiliser le chat IA, entrez votre clé OpenAI (gratuite sur https://platform.openai.com/api-keys)</p>
-            <div class="api-input">
-                <input type="password" id="apiKeyInput" placeholder="sk-... ou gsk-...">
-                <button onclick="saveApiKey()">Sauvegarder</button>
-            </div>
-            <p style="font-size: 0.85em; margin-top: 10px; opacity: 0.8;">Votre clé reste locale, elle n'est envoyée nulle part</p>
-        </div>
-        
         <!-- Upload Section -->
         <div class="upload-section">
             <div class="upload-area" id="uploadArea">
@@ -104,7 +84,7 @@
             <div class="chat-messages" id="chatMessages">
                 <div class="message system">
                     🎉 Chargez votre livre de médecine et posez-moi vos questions !<br><br>
-                    💡 <strong>Astuce:</strong> Sélectionnez une spécialité ci-dessous et entrez votre clé API OpenAI.
+                    💡 <strong>Astuce:</strong> Sélectionnez une spécialité ci-dessous pour un tutorat personnalisé.
                 </div>
             </div>
             <div class="chat-input-area">
@@ -210,30 +190,11 @@
         let bookContext = '';
         let selectedPreset = '';
         let isProcessing = false;
-        let apiKey = localStorage.getItem('medtutor_apikey') || '';
-        
-        // Load saved API key
-        if (apiKey) {
-            document.getElementById('apiKeyInput').value = apiKey;
-            document.getElementById('apiSection').style.display = 'none';
-        }
-        
-        function saveApiKey() {
-            const input = document.getElementById('apiKeyInput').value.trim();
-            if (input.startsWith('sk-') || input.startsWith('gsk-')) {
-                apiKey = input;
-                localStorage.setItem('medtutor_apikey', apiKey);
-                document.getElementById('apiSection').style.display = 'none';
-                addMessage('system', '✅ Clé API sauvegardée ! Vous pouvez maintenant utiliser le chat.');
-                document.getElementById('chatSection').style.display = 'block';
-            } else {
-                alert('Veuillez entrer une clé valide (sk-... ou gsk-...)');
-            }
-        }
         
         // Upload handling
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
+        const chatSection = document.getElementById('chatSection');
         
         uploadArea.addEventListener('click', () => fileInput.click());
         uploadArea.addEventListener('dragover', (e) => {
@@ -269,7 +230,7 @@
                 </div>
             `;
             
-            // Simple simulation (real PDF extraction needs server)
+            // Simple simulation
             await new Promise(r => setTimeout(r, 1500));
             
             bookContext = `# Livre médical: ${file.name}\n\nCe livre contient des informations médicales complètes.\n\n## Principaux thèmes:\n- Cardiologie et pathologies cardiovasculaires\n- Neurologie et troubles du système nerveux\n- Pneumologie et maladies respiratoires\n- Gastro-entérologie\n- Médecine générale\n\n---`;
@@ -282,8 +243,8 @@
                 </div>
             `;
             
-            document.getElementById('chatSection').style.display = 'block';
-            addMessage('system', `📚 Livre "${file.name}" chargé ! (${Math.floor(Math.random() * 500 + 100)} pages analysées)\n\n💡 Posez vos questions sur le contenu.`);
+            chatSection.style.display = 'block';
+            addMessage('system', `📚 Livre "${file.name}" chargé !\n\n💡 Posez vos questions sur le contenu.`);
         }
         
         function selectPreset(element, presetId) {
@@ -301,11 +262,6 @@
             const message = input.value.trim();
             
             if (!message || isProcessing) return;
-            if (!apiKey) {
-                alert('Veuillez d\'abord entrer votre clé API OpenAI ou Groq !');
-                document.getElementById('apiSection').scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
             
             isProcessing = true;
             input.value = '';
@@ -351,19 +307,12 @@
         }
         
         async function queryAI(message, systemPrompt, context) {
-            // Use OpenAI compatible API (works with OpenAI or Groq)
-            const isGroq = apiKey.startsWith('gsk-');
-            const baseUrl = isGroq ? 'https://api.groq.com/openai/v1' : 'https://api.openai.com/v1';
-            const model = isGroq ? 'llama-3.3-70b-versatile' : 'gpt-4o-mini';
-            
-            const response = await fetch(`${baseUrl}/chat/completions`, {
+            // Use OmniRoute local API (free, no key needed)
+            const response = await fetch('http://127.0.0.1:20128/v1/chat/completions', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    model: model,
+                    model: 'auto/best-chat',
                     messages: [
                         { role: 'system', content: systemPrompt },
                         { role: 'user', content: message + context }
@@ -374,8 +323,8 @@
             });
             
             if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error?.message || 'Erreur API');
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.error?.message || `HTTP ${response.status}`);
             }
             
             const data = await response.json();
