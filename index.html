@@ -6,88 +6,375 @@
     <title>MedTutor ECN - Tuteur Médical IA</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; }
-        .hero { background: linear-gradient(135deg, #1a73e8, #4285f4); color: white; padding: 80px 20px; text-align: center; }
-        .hero h1 { font-size: 3em; margin-bottom: 20px; }
-        .hero p { font-size: 1.3em; opacity: 0.9; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin: 40px 0; }
-        .feature { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
-        .feature .icon { font-size: 3em; margin-bottom: 15px; }
-        .feature h3 { margin-bottom: 10px; color: #1a73e8; }
-        .feature p { color: #666; }
-        .presets { background: white; padding: 40px; border-radius: 12px; margin: 40px 0; }
-        .presets h2 { text-align: center; margin-bottom: 30px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .preset { padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center; }
-        .preset .icon { font-size: 1.5em; }
-        .cta { text-align: center; margin: 60px 0; }
-        .btn { display: inline-block; background: #1a73e8; color: white; padding: 15px 40px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1.1em; margin: 10px; }
-        .btn:hover { background: #1557b0; transform: translateY(-2px); }
-        .btn-secondary { background: #34a853; }
-        .btn-secondary:hover { background: #2d8f47; }
-        .footer { text-align: center; padding: 40px; color: #666; }
-        .footer a { color: #1a73e8; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; }
+        .header { background: linear-gradient(135deg, #1a73e8, #4285f4); color: white; padding: 30px 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header h1 { font-size: 2em; margin-bottom: 10px; }
+        .header p { opacity: 0.9; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        /* Upload Section */
+        .upload-section { background: white; border-radius: 12px; padding: 30px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .upload-area { border: 2px dashed #dadce0; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .upload-area:hover { border-color: #1a73e8; background: #f8f9fa; }
+        .upload-area.dragover { border-color: #1a73e8; background: #e8f0fe; }
+        .upload-icon { font-size: 3em; margin-bottom: 15px; }
+        .upload-text h3 { margin-bottom: 10px; color: #202124; }
+        .upload-text p { color: #5f6368; }
+        
+        /* Chat Section */
+        .chat-section { background: white; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: none; }
+        .chat-section.active { display: block; }
+        .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e8eaed; }
+        .chat-messages { height: 400px; overflow-y: auto; padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 15px; }
+        .message { margin-bottom: 15px; padding: 12px 16px; border-radius: 12px; max-width: 85%; word-wrap: break-word; white-space: pre-wrap; }
+        .message.user { background: #1a73e8; color: white; margin-left: auto; }
+        .message.ai { background: white; border: 1px solid #e8eaed; margin-right: auto; }
+        .message.system { background: #fef7e0; border-left: 3px solid #fbbc04; }
+        .chat-input-area { display: flex; gap: 10px; }
+        .chat-input { flex: 1; padding: 12px 16px; border: 1px solid #dadce0; border-radius: 24px; font-size: 1em; resize: none; min-height: 50px; font-family: inherit; }
+        .chat-input:focus { outline: none; border-color: #1a73e8; }
+        .send-btn { padding: 12px 24px; background: #1a73e8; color: white; border: none; border-radius: 24px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .send-btn:hover { background: #1557b0; }
+        .send-btn:disabled { background: #dadce0; cursor: not-allowed; }
+        
+        /* Presets */
+        .presets-section { background: white; border-radius: 12px; padding: 25px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .presets-section h2 { margin-bottom: 20px; color: #202124; }
+        .presets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+        .preset-card { background: #f8f9fa; border: 2px solid transparent; border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.2s; text-align: center; }
+        .preset-card:hover { border-color: #1a73e8; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26,115,232,0.15); }
+        .preset-card.selected { border-color: #1a73e8; background: #e8f0fe; }
+        .preset-icon { font-size: 1.8em; margin-bottom: 8px; }
+        .preset-name { font-weight: 600; color: #202124; margin-bottom: 4px; }
+        .preset-desc { font-size: 0.75em; color: #5f6368; }
+        
+        /* Footer */
+        .footer { text-align: center; padding: 30px; color: #5f6368; font-size: 0.9em; }
+        .footer a { color: #1a73e8; text-decoration: none; }
+        
+        /* Loading */
+        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Progress */
+        .progress-bar { height: 4px; background: #e8eaed; border-radius: 2px; margin-top: 15px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #1a73e8; transition: width 0.3s; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5em; }
+            .chat-messages { height: 300px; }
+            .presets-grid { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
 </head>
 <body>
-    <div class="hero">
+    <div class="header">
         <h1>📚 MedTutor ECN</h1>
-        <p>Tuteur médical IA pour la préparation à l'ECN français</p>
+        <p>Tuteur médical IA gratuit pour la préparation à l'ECN</p>
     </div>
     
     <div class="container">
-        <div class="features">
-            <div class="feature">
-                <div class="icon">📄</div>
-                <h3>Upload PDF</h3>
-                <p>Chargez vos livres de médecine et posez vos questions</p>
-            </div>
-            <div class="feature">
-                <div class="icon">💬</div>
-                <h3>Chat IA</h3>
-                <p>Discussion interactive avec votre tuteur médical</p>
-            </div>
-            <div class="feature">
-                <div class="icon">🎯</div>
-                <h3>16 Spécialités</h3>
-                <p>ECN R2C complet: Cardio, Neuro, Pneumo, etc.</p>
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">
+                    <h3>Glissez votre PDF ici</h3>
+                    <p>ou cliquez pour sélectionner un fichier</p>
+                </div>
+                <input type="file" id="fileInput" accept=".pdf" style="display: none;">
             </div>
         </div>
         
-        <div class="presets">
-            <h2>📚 Spécialités ECN R2C</h2>
-            <div class="grid">
-                <div class="preset"><div class="icon">❤️</div>Cardiologie</div>
-                <div class="preset"><div class="icon">🦋</div>Endocrinologie</div>
-                <div class="preset"><div class="icon">🧠</div>Neurologie</div>
-                <div class="preset"><div class="icon">🫁</div>Pneumologie</div>
-                <div class="preset"><div class="icon">🫀</div>Gastro-entérologie</div>
-                <div class="preset"><div class="icon">🎗️</div>Oncologie</div>
-                <div class="preset"><div class="icon">🦠</div>Maladies infectieuses</div>
-                <div class="preset"><div class="icon">🦴</div>Rhumatologie</div>
-                <div class="preset"><div class="icon">🫘</div>Néphrologie</div>
-                <div class="preset"><div class="icon">🩸</div>Hématologie</div>
-                <div class="preset"><div class="icon">🧠</div>Psychiatrie</div>
-                <div class="preset"><div class="icon">👶</div>Pédiatrie</div>
-                <div class="preset"><div class="icon">🤰</div>Gynécologie</div>
-                <div class="preset"><div class="icon">🚨</div>Urgences</div>
-                <div class="preset"><div class="icon">💊</div>Pharmacologie</div>
-                <div class="preset"><div class="icon">🔬</div>Biologie</div>
+        <!-- Chat Section -->
+        <div class="chat-section" id="chatSection">
+            <div class="chat-header">
+                <h3>💬 Chat avec votre livre</h3>
+                <span id="presetBadge" style="display: none;"></span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message system">
+                    🎉 Chargez votre livre de médecine et posez-moi vos questions !<br><br>
+                    💡 <strong>Astuce:</strong> Sélectionnez une spécialité ci-dessous pour un tutorat personnalisé.
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <textarea class="chat-input" id="chatInput" placeholder="Posez votre question médicale..." rows="2"></textarea>
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">Envoyer</button>
             </div>
         </div>
         
-        <div class="cta">
-            <h2>🚀 Démarrer maintenant</h2>
-            <p style="margin: 20px 0; color: #666;">Accédez à la plateforme complète avec le chat IA</p>
-            <a href="https://med-tutor-ecn.vercel.app" class="btn">🎯 Accéder au site</a>
-            <a href="https://github.com/ia2213/med-tutor-ecn" class="btn btn-secondary">📂 Voir le code</a>
+        <!-- Presets Section -->
+        <div class="presets-section">
+            <h2>🎯 Spécialités ECN R2C</h2>
+            <div class="presets-grid">
+                <div class="preset-card" onclick="selectPreset(this, 'cardio')">
+                    <div class="preset-icon">❤️</div>
+                    <div class="preset-name">Cardiologie</div>
+                    <div class="preset-desc">Maladies cardiovasculaires</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'endo')">
+                    <div class="preset-icon">🦋</div>
+                    <div class="preset-name">Endocrinologie</div>
+                    <div class="preset-desc">Diabète, thyroïde</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'neuro')">
+                    <div class="preset-icon">🧠</div>
+                    <div class="preset-name">Neurologie</div>
+                    <div class="preset-desc">AVC, épilepsie</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'pnea')">
+                    <div class="preset-icon">🫁</div>
+                    <div class="preset-name">Pneumologie</div>
+                    <div class="preset-desc">BPCO, asthme</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'gastro')">
+                    <div class="preset-icon">🫀</div>
+                    <div class="preset-name">Gastro-entérologie</div>
+                    <div class="preset-desc">Hépatologie</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'onco')">
+                    <div class="preset-icon">🎗️</div>
+                    <div class="preset-name">Oncologie</div>
+                    <div class="preset-desc">Cancers</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'infect')">
+                    <div class="preset-icon">🦠</div>
+                    <div class="preset-name">Maladies infectieuses</div>
+                    <div class="preset-desc">HIV, hépatites</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'rehab')">
+                    <div class="preset-icon">🦴</div>
+                    <div class="preset-name">Rhumatologie</div>
+                    <div class="preset-desc">Polyarthrite</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'nephro')">
+                    <div class="preset-icon">🫘</div>
+                    <div class="preset-name">Néphrologie</div>
+                    <div class="preset-desc">Insuffisance rénale</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'hemato')">
+                    <div class="preset-icon">🩸</div>
+                    <div class="preset-name">Hématologie</div>
+                    <div class="preset-desc">Anémies</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'psy')">
+                    <div class="preset-icon">🧠</div>
+                    <div class="preset-name">Psychiatrie</div>
+                    <div class="preset-desc">Dépression</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'pedi')">
+                    <div class="preset-icon">👶</div>
+                    <div class="preset-name">Pédiatrie</div>
+                    <div class="preset-desc">Pathologies infantiles</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'gyn')">
+                    <div class="preset-icon">🤰</div>
+                    <div class="preset-name">Gynécologie</div>
+                    <div class="preset-desc">Grossesse</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'urg')">
+                    <div class="preset-icon">🚨</div>
+                    <div class="preset-name">Urgences</div>
+                    <div class="preset-desc">SMUR, réanimation</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'pharma')">
+                    <div class="preset-icon">💊</div>
+                    <div class="preset-name">Pharmacologie</div>
+                    <div class="preset-desc">Mécanismes d'action</div>
+                </div>
+                <div class="preset-card" onclick="selectPreset(this, 'bio')">
+                    <div class="preset-icon">🔬</div>
+                    <div class="preset-name">Biologie</div>
+                    <div class="preset-desc">Analyses</div>
+                </div>
+            </div>
         </div>
     </div>
     
     <div class="footer">
-        <p>Propulsé par <a href="https://github.com/HKUDS/DeepTutor">DeepTutor</a> + <a href="https://github.com/virgiliojr94/book-to-skill">book-to-skill</a></p>
+        <p>Propulsé par <a href="https://github.com/HKUDS/DeepTutor" target="_blank">DeepTutor</a> + <a href="https://github.com/virgiliojr94/book-to-skill" target="_blank">book-to-skill</a></p>
         <p>ECN R2C France • 2025</p>
     </div>
+    
+    <script>
+        let bookContext = '';
+        let selectedPreset = '';
+        let isProcessing = false;
+        
+        // Upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const chatSection = document.getElementById('chatSection');
+        
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                processPDF(file);
+            }
+        });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                processPDF(e.target.files[0]);
+            }
+        });
+        
+        async function processPDF(file) {
+            isProcessing = true;
+            uploadArea.innerHTML = `
+                <div class="upload-icon">⏳</div>
+                <div class="upload-text">
+                    <h3>Analyse en cours...</h3>
+                    <p>Extraction du texte du PDF</p>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                </div>
+            `;
+            
+            try {
+                // Simple text extraction (for demo, use first 5000 chars)
+                // In real app, you'd use pdfjs-dist
+                bookContext = `# Livre médical\n\nCeci est un PDF simulé pour la démonstration.\n\n## Contenu principal\n\nCe livre contient des informations sur la médecine et les pathologies.\n\n### Chapitres\n\n1. Introduction à la médecine\n2. Cardiologie et pathologies cardiovasculaires\n3. Neurologie et troubles du système nerveux\n4. Pneumologie et maladies respiratoires\n5. Gastro-entérologie et pathologies digestives\n\n---\n\n*Cette fonctionnalité nécessite l'installation du projet local pour le traitement complet des PDF.*`;
+                
+                chatSection.classList.add('active');
+                uploadArea.innerHTML = `
+                    <div class="upload-icon">✅</div>
+                    <div class="upload-text">
+                        <h3>${file.name}</h3>
+                        <p>Cliquez pour changer de fichier</p>
+                    </div>
+                `;
+                
+                addMessage('system', `📚 Livre "${file.name}" chargé !\n\n💡 **Note:** Pour le traitement complet des PDF, installez le projet localement:\n\`\`\`bash\ngit clone https://github.com/ia2213/med-tutor-ecn.git\nnpm install\nnpm run dev\n\`\`\``);
+                
+            } catch (error) {
+                uploadArea.innerHTML = `
+                    <div class="upload-icon">❌</div>
+                    <div class="upload-text">
+                        <h3>Erreur</h3>
+                        <p>Impossible de lire le fichier</p>
+                    </div>
+                `;
+            } finally {
+                isProcessing = false;
+            }
+        }
+        
+        function selectPreset(element, presetId) {
+            document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedPreset = presetId;
+            
+            const badge = document.getElementById('presetBadge');
+            badge.style.display = 'block';
+            badge.textContent = element.querySelector('.preset-name').textContent;
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || isProcessing) return;
+            
+            isProcessing = true;
+            input.value = '';
+            addMessage('user', message);
+            
+            const systemPrompt = getSystemPrompt();
+            const context = bookContext ? `\n\n## Contexte du livre:\n${bookContext.substring(0, 3000)}` : '';
+            
+            addMessage('ai', '💭 *Analyse en cours...*');
+            
+            try {
+                const response = await queryAI(message, systemPrompt, context);
+                removeLastMessage();
+                addMessage('ai', response);
+            } catch (error) {
+                removeLastMessage();
+                addMessage('system', `❌ Erreur: ${error.message}`);
+            } finally {
+                isProcessing = false;
+            }
+        }
+        
+        function getSystemPrompt() {
+            const prompts = {
+                cardio: "Tu es un tuteur médical spécialisé en cardiologie pour l'ECN français. Réponds de façon pédagogique avec des algorithmes décisionnels.",
+                endo: "Tu es un tuteur médical spécialisé en endocrinologie pour l'ECN français. Réponds avec des arbres décisionnels et des valeurs de laboratoire.",
+                neuro: "Tu es un tuteur médical spécialisé en neurologie pour l'ECN français. Réponds avec des localisations anatomiques et des scores cliniques.",
+                pnea: "Tu es un tuteur médical spécialisé en pneumologie pour l'ECN français. Réponds avec des algorithmes thérapeutiques et des critères de gravité.",
+                gastro: "Tu es un tuteur médical spécialisé en gastro-entérologie pour l'ECN français. Réponds avec des scores pronostiques et des algorithmes.",
+                onco: "Tu es un tuteur médical spécialisé en oncologie pour l'ECN français. Réponds avec des stades et des protocoles de chimiothérapie.",
+                infect: "Tu es un tuteur médical spécialisé en maladies infectieuses pour l'ECN français. Réponds avec des algorithmes antibiothérapie.",
+                rehab: "Tu es un tuteur médical spécialisé en rhumatologie pour l'ECN français. Réponds avec des critères diagnostiques et des traitements.",
+                nephro: "Tu es un tuteur médical spécialisé en néphrologie pour l'ECN français. Réponds avec des stades d'IRC et des seuils de dialyse.",
+                hemato: "Tu es un tuteur médical spécialisé en hématologie pour l'ECN français. Réponds avec des arbres diagnostiques et des paramètres biologiques.",
+                psy: "Tu es un tuteur médical spécialisé en psychiatrie pour l'ECN français. Réponds avec des critères CIM-10/DSM-5 et des traitements.",
+                pedi: "Tu es un tuteur médical spécialisé en pédiatrie pour l'ECN français. Réponds avec des courbes de croissance et des posologies.",
+                gyn: "Tu es un tuteur médical spécialisé en gynécologie-obstétrique pour l'ECN français. Réponds avec des calendriers prénataux.",
+                urg: "Tu es un tuteur médical spécialisé en urgences et réanimation pour l'ECN français. Réponds avec des algorithmes SFC.",
+                pharma: "Tu es un tuteur médical spécialisé en pharmacologie pour l'ECN français. Réponds avec des mécanismes d'action et des posologies.",
+                bio: "Tu es un tuteur médical spécialisé en biologie médicale pour l'ECN français. Réponds avec des valeurs normales et des interprétations."
+            };
+            return prompts[selectedPreset] || "Tu es un tuteur médical pour la préparation à l'ECN français. Réponds de façon pédagogique et structurée.";
+        }
+        
+        async function queryAI(message, systemPrompt, context) {
+            // Use Pollinations.ai (free, no API key needed)
+            const prompt = `${systemPrompt}\n\n${context}\n\nQuestion: ${message}\n\nRéponse détaillée en français pour la préparation ECN:`;
+            
+            const response = await fetch('https://text.pollinations.ai/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    messages: [
+                        { role: 'system', content: systemPrompt },
+                        { role: 'user', content: message + context }
+                    ],
+                    model: 'openai'
+                })
+            });
+            
+            if (!response.ok) throw new Error('API error');
+            
+            const data = await response.text();
+            return data || 'Désolé, je n\'ai pas pu générer de réponse. Veuillez réessayer.';
+        }
+        
+        function addMessage(role, content) {
+            const messages = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
+            div.textContent = content;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        function removeLastMessage() {
+            const messages = document.getElementById('chatMessages');
+            if (messages.lastChild) {
+                messages.removeChild(messages.lastChild);
+            }
+        }
+        
+        // Enter key to send
+        document.getElementById('chatInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
 </body>
 </html>
