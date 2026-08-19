@@ -4,24 +4,43 @@
 
 **GitHub Pages:** https://ia2213.github.io/med-tutor-ecn/
 
-**Repository:** https://github.com/ia2213/med-tutor-ecn
+---
+
+## ✅ Fonctionnalités
+
+### Chat IA Gratuit (Pollinations.ai)
+- ✅ **100% gratuit** - Pas besoin de clé API
+- ✅ **16 spécialités ECN R2C** - Cardo, Neuro, Pneumo, etc.
+- ✅ **Upload PDF** - Chargez vos livres de médecine
+- ✅ **Réponses en français** - Pédagogique et structuré
+
+### Comment utiliser
+1. **Glissez un PDF** ou cliquez pour uploader
+2. **Sélectionnez une spécialité** (ex: Cardiologie)
+3. **Posez vos questions** - L'IA répond avec des explications détaillées
 
 ---
 
-## ✅ Déploiement terminé !
+## 🎯 Spécialités ECN R2C
 
-Votre site MedTutor ECN est maintenant en ligne !
-
-**URL:** https://ia2213.github.io/med-tutor-ecn/
-
----
-
-## 🎯 Fonctionnalités
-
-- ✅ Page d'accueil interactive
-- ✅ 16 spécialités ECN R2C
-- ✅ Design responsive
-- ✅ Liens vers le code source
+| Spécialité | Icône |
+|------------|-------|
+| Cardiologie | ❤️ |
+| Endocrinologie | 🦋 |
+| Neurologie | 🧠 |
+| Pneumologie | 🫁 |
+| Gastro-entérologie | 🫀 |
+| Oncologie | 🎗️ |
+| Maladies infectieuses | 🦠 |
+| Rhumatologie | 🦴 |
+| Néphrologie | 🫘 |
+| Hématologie | 🩸 |
+| Psychiatrie | 🧠 |
+| Pédiatrie | 👶 |
+| Gynécologie-Obstétrique | 🤰 |
+| Urgences & Réanimation | 🚨 |
+| Pharmacologie | 💊 |
+| Biologie médicale | 🔬 |
 
 ---
 
@@ -34,10 +53,13 @@ Votre site MedTutor ECN est maintenant en ligne !
 
 ---
 
-## 🔧 Pour le chat IA (version complète)
+## 🚀 Technologies
 
-La version GitHub Pages est **statique**. Pour le chat IA complet, déployez sur **Vercel**.
+- **Frontend:** HTML/CSS/JavaScript vanilla
+- **IA:** Pollinations.ai (gratuit, open source)
+- **Hébergement:** GitHub Pages
+- **Upload PDF:** Traitement client-side
 
 ---
 
-**Propulsé par DeepTutor + book-to-skill**
+**Propulsé par DeepTutor + book-to-skill** 🎓
