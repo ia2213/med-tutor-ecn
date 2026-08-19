@@ -5,86 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MedTutor ECN - Tuteur Médical IA</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
-        .header { background: linear-gradient(135deg, #1a73e8, #4285f4); color: white; padding: 40px; border-radius: 12px; text-align: center; margin-bottom: 30px; }
-        .header h1 { margin: 0; font-size: 2.5em; }
-        .header p { margin: 10px 0 0; opacity: 0.9; }
-        .content { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
-        .feature { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; }
-        .feature h3 { margin: 10px 0 5px; color: #333; }
-        .btn { display: inline-block; background: #1a73e8; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; margin: 10px; font-weight: 600; }
-        .btn:hover { background: #1557b0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; }
+        .hero { background: linear-gradient(135deg, #1a73e8, #4285f4); color: white; padding: 80px 20px; text-align: center; }
+        .hero h1 { font-size: 3em; margin-bottom: 20px; }
+        .hero p { font-size: 1.3em; opacity: 0.9; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin: 40px 0; }
+        .feature { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+        .feature .icon { font-size: 3em; margin-bottom: 15px; }
+        .feature h3 { margin-bottom: 10px; color: #1a73e8; }
+        .feature p { color: #666; }
+        .presets { background: white; padding: 40px; border-radius: 12px; margin: 40px 0; }
+        .presets h2 { text-align: center; margin-bottom: 30px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .preset { padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center; }
+        .preset .icon { font-size: 1.5em; }
+        .cta { text-align: center; margin: 60px 0; }
+        .btn { display: inline-block; background: #1a73e8; color: white; padding: 15px 40px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1.1em; margin: 10px; }
+        .btn:hover { background: #1557b0; transform: translateY(-2px); }
         .btn-secondary { background: #34a853; }
         .btn-secondary:hover { background: #2d8f47; }
-        .footer { text-align: center; margin-top: 40px; color: #666; }
-        .specs { background: #e8f0fe; padding: 20px; border-radius: 8px; margin: 20px 0; }
-        .specs h3 { margin-top: 0; }
-        ul { line-height: 1.8; }
+        .footer { text-align: center; padding: 40px; color: #666; }
+        .footer a { color: #1a73e8; }
     </style>
 </head>
 <body>
-    <div class="header">
+    <div class="hero">
         <h1>📚 MedTutor ECN</h1>
         <p>Tuteur médical IA pour la préparation à l'ECN français</p>
     </div>
     
-    <div class="content">
-        <h2>Bienvenue sur MedTutor ECN</h2>
-        <p>Notre plateforme utilise <strong>DeepTutor</strong> + <strong>book-to-skill</strong> pour vous aider à réviser vos livres de médecine.</p>
-        
-        <div class="specs">
-            <h3>🎯 Fonctionnalités</h3>
-            <ul>
-                <li>📄 <strong>Upload PDF</strong> - Chargez vos livres de médecine</li>
-                <li>💬 <strong>Chat IA</strong> - Posez vos questions et recevez des réponses</li>
-                <li>🎯 <strong>16 Spécialités ECN R2C</strong> - Toutes les matières couvertes</li>
-                <li>🤖 <strong>DeepTutor + book-to-skill</strong> - Technologie open-source</li>
-            </ul>
-        </div>
-        
+    <div class="container">
         <div class="features">
             <div class="feature">
-                <div style="font-size: 2em;">📄</div>
+                <div class="icon">📄</div>
                 <h3>Upload PDF</h3>
-                <p>Chargez vos livres</p>
+                <p>Chargez vos livres de médecine et posez vos questions</p>
             </div>
             <div class="feature">
-                <div style="font-size: 2em;">💬</div>
+                <div class="icon">💬</div>
                 <h3>Chat IA</h3>
-                <p>Questions/réponses</p>
+                <p>Discussion interactive avec votre tuteur médical</p>
             </div>
             <div class="feature">
-                <div style="font-size: 2em;">🎯</div>
+                <div class="icon">🎯</div>
                 <h3>16 Spécialités</h3>
-                <p>ECN R2C complet</p>
+                <p>ECN R2C complet: Cardio, Neuro, Pneumo, etc.</p>
             </div>
         </div>
         
-        <div style="text-align: center; margin: 40px 0;">
-            <a href="https://med-tutor-ecn.vercel.app" class="btn">🚀 Accéder au site (Vercel)</a>
+        <div class="presets">
+            <h2>📚 Spécialités ECN R2C</h2>
+            <div class="grid">
+                <div class="preset"><div class="icon">❤️</div>Cardiologie</div>
+                <div class="preset"><div class="icon">🦋</div>Endocrinologie</div>
+                <div class="preset"><div class="icon">🧠</div>Neurologie</div>
+                <div class="preset"><div class="icon">🫁</div>Pneumologie</div>
+                <div class="preset"><div class="icon">🫀</div>Gastro-entérologie</div>
+                <div class="preset"><div class="icon">🎗️</div>Oncologie</div>
+                <div class="preset"><div class="icon">🦠</div>Maladies infectieuses</div>
+                <div class="preset"><div class="icon">🦴</div>Rhumatologie</div>
+                <div class="preset"><div class="icon">🫘</div>Néphrologie</div>
+                <div class="preset"><div class="icon">🩸</div>Hématologie</div>
+                <div class="preset"><div class="icon">🧠</div>Psychiatrie</div>
+                <div class="preset"><div class="icon">👶</div>Pédiatrie</div>
+                <div class="preset"><div class="icon">🤰</div>Gynécologie</div>
+                <div class="preset"><div class="icon">🚨</div>Urgences</div>
+                <div class="preset"><div class="icon">💊</div>Pharmacologie</div>
+                <div class="preset"><div class="icon">🔬</div>Biologie</div>
+            </div>
+        </div>
+        
+        <div class="cta">
+            <h2>🚀 Démarrer maintenant</h2>
+            <p style="margin: 20px 0; color: #666;">Accédez à la plateforme complète avec le chat IA</p>
+            <a href="https://med-tutor-ecn.vercel.app" class="btn">🎯 Accéder au site</a>
             <a href="https://github.com/ia2213/med-tutor-ecn" class="btn btn-secondary">📂 Voir le code</a>
         </div>
-        
-        <h3>📚 Spécialités ECN R2C</h3>
-        <ul>
-            <li>❤️ <strong>Cardiologie</strong> - Maladies cardiovasculaires</li>
-            <li>🧠 <strong>Neurologie</strong> - AVC, épilepsie, Parkinson</li>
-            <li>🫁 <strong>Pneumologie</strong> - BPCO, asthme</li>
-            <li>🫀 <strong>Gastro-entérologie</strong> - Hépatologie</li>
-            <li>🎗️ <strong>Oncologie</strong> - Cancers</li>
-            <li>🦠 <strong>Maladies infectieuses</strong> - HIV, hépatites</li>
-            <li>🦴 <strong>Rhumatologie</strong> - Polyarthrite</li>
-            <li>🫘 <strong>Néphrologie</strong> - Insuffisance rénale</li>
-            <li>🩸 <strong>Hématologie</strong> - Anémies, leucémies</li>
-            <li>🧠 <strong>Psychiatrie</strong> - Dépression, schizophrénie</li>
-            <li>👶 <strong>Pédiatrie</strong> - Pathologies infantiles</li>
-            <li>🤰 <strong>Gynécologie-Obstétrique</strong> - Grossesse</li>
-            <li>🚨 <strong>Urgences & Réanimation</strong> - SMUR</li>
-            <li>💊 <strong>Pharmacologie</strong> - Mécanismes d'action</li>
-            <li>🔬 <strong>Biologie médicale</strong> - Analyses</li>
-            <li>🦋 <strong>Endocrinologie</strong> - Diabète, thyroïde</li>
-        </ul>
     </div>
     
     <div class="footer">
