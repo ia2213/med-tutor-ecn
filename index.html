@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedTutor ECN - Tuteur Médical IA</title>
+    <title>MedTutor ECN - Tuteur Médical IA (v2.1)</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; }
@@ -141,40 +141,59 @@
 
     <script>
         const API = 'http://localhost:4000';
-        let selectedPreset = '';
-        let selectedBookId = '';
-        let isProcessing = false;
-        let books = [];
-
-        // === STATUS CHECK ===
-        async function checkStatus() {
+        
+        // === TEST API CONNECTION ===
+        async function testConnection() {
             const b = document.getElementById('statusBackend');
             const o = document.getElementById('statusOmni');
             try {
-                const r = await fetch(`${API}/api/health`);
-                const d = await r.json();
-                b.textContent = `✅ Backend: connecté`;
+                // Test backend
+                const r = await fetch(`${API}/api/health`, { 
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                const text = await r.text();
+                console.log('Backend response:', text);
+                
+                if (!r.ok || !text.includes('"status"')) {
+                    throw new Error(`Bad response: ${text.substring(0, 100)}`);
+                }
+                
+                const d = JSON.parse(text);
+                b.textContent = `✅ Backend: connecté (v2.1)`;
                 b.className = 'status-pill status-ok';
+                
                 o.textContent = d.omniroute ? `✅ OmniRoute: connecté` : `❌ OmniRoute: indisponible`;
                 o.className = d.omniroute ? 'status-pill status-ok' : 'status-pill status-err';
+                
             } catch (e) {
-                b.textContent = `❌ Backend: indisponible (démarrez node server.js)`;
+                console.error('Connection test failed:', e);
+                b.textContent = `❌ Backend: ${e.message}`;
                 b.className = 'status-pill status-err';
                 o.textContent = `⏳ OmniRoute: vérification...`;
                 o.className = 'status-pill status-wait';
             }
         }
-        checkStatus();
-        setInterval(checkStatus, 5000);
+        testConnection();
+        setInterval(testConnection, 10000);
 
         // === LOAD BOOKS ===
         async function loadBooks() {
             try {
-                const r = await fetch(`${API}/api/books`);
-                const d = await r.json();
+                const r = await fetch(`${API}/api/books`, { 
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                const text = await r.text();
+                if (!text.includes('"books"')) throw new Error(text);
+                const d = JSON.parse(text);
                 books = d.books;
                 renderBooks();
-            } catch (e) {}
+            } catch (e) {
+                console.error('loadBooks error:', e);
+                const list = document.getElementById('booksList');
+                list.innerHTML = `<p style="color:#dc3545">❌ Erreur chargement: ${e.message}</p>`;
+            }
         }
         loadBooks();
 
