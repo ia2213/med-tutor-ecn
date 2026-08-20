@@ -154,13 +154,14 @@
             console.log('[TEST] API base:', API);
             
             try {
-                // Test backend with debug
-                console.log('[TEST] Fetching /api/health...');
-                const r = await fetch(`${API}/api/health`, { 
+                // Force no-cache by adding timestamp
+                const timestamp = Date.now();
+                console.log('[TEST] Fetching /api/health?_t=' + timestamp + '...');
+                const r = await fetch(`${API}/api/health?_t=${timestamp}`, { 
                     method: 'GET',
                     headers: { 'Accept': 'application/json' },
                     mode: 'cors',
-                    cache: 'no-cache'
+                    cache: 'no-store'
                 });
                 console.log('[TEST] Response status:', r.status);
                 console.log('[TEST] Response headers:', Object.fromEntries(r.headers.entries()));
