@@ -255,7 +255,7 @@
                 const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
 
                 let fullText = '';
-                const pagesToRead = Math.min(pdf.numPages, 50);
+                const pagesToRead = Math.min(pdf.numPages, 200); // Max 200 pages pour la démo
 
                 for (let i = 1; i <= pagesToRead; i++) {
                     const page = await pdf.getPage(i);
