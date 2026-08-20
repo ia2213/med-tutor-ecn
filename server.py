@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 MedTutor - Simple HTTP server with API proxy to Node backend
-Supports both IPv4 and IPv6
+Supports both IPv4 and IPv6 (DualStack)
 Usage: python server.py [port]
 """
 import sys
@@ -10,25 +10,59 @@ import json
 import urllib.request
 import urllib.error
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-from socketserver import TCPServer
 import socket
+import threading
 
 BACKEND_PORT = 4000
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8765
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-class DualStackServer(HTTPServer):
-    """Support both IPv4 and IPv6"""
-    address_family = socket.AF_INET6
-    
-    def server_bind(self):
+class DualStackServer:
+    """Support both IPv4 and IPv6 simultaneously"""
+    def __init__(self, port):
+        self.port = port
+        self.servers = []
+        self.threads = []
+        
+    def start(self):
+        # Start IPv4 server
         try:
-            super().server_bind()
-        except OSError:
-            # IPv6 failed, try IPv4
-            self.address_family = socket.AF_INET
-            self.server_address = self.server_address[:2]  # Strip IPv6 scope
-            super().server_bind()
+            s4 = HTTPServer(('0.0.0.0', self.port), ProxyHandler)
+            t4 = threading.Thread(target=s4.serve_forever, daemon=True)
+            t4.start()
+            self.servers.append(s4)
+            self.threads.append(t4)
+            print(f"  IPv4: http://0.0.0.0:{self.port}")
+        except Exception as e:
+            print(f"  IPv4 failed: {e}")
+        
+        # Start IPv6 server
+        try:
+            s6 = HTTPServer(('::', self.port), ProxyHandler)
+            s6.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
+            t6 = threading.Thread(target=s6.serve_forever, daemon=True)
+            t6.start()
+            self.servers.append(s6)
+            self.threads.append(t6)
+            print(f"  IPv6: http://[::]:{self.port}")
+        except Exception as e:
+            print(f"  IPv6 failed: {e}")
+        
+        if not self.servers:
+            raise RuntimeError("Failed to start any server")
+            
+    def serve_forever(self):
+        import time
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            for s in self.servers:
+                s.shutdown()
+    
+    def server_close(self):
+        for s in self.servers:
+            s.server_close()
 
 class ProxyHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -93,9 +127,9 @@ class ProxyHandler(SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     os.chdir(BASE_DIR)
-    server = DualStackServer(('::', PORT), ProxyHandler)
+    server = DualStackServer(PORT)
     print(f"\n{'='*50}")
-    print(f"  MedTutor ECN - Local Server (IPv4+IPv6)")
+    print(f"  MedTutor ECN - Local Server")
     print(f"{'='*50}")
     print(f"  Frontend:  http://localhost:{PORT}")
     print(f"  Backend:   http://localhost:{BACKEND_PORT}")
@@ -103,6 +137,7 @@ if __name__ == '__main__':
     print(f"{'='*50}")
     print(f"\n  Open http://localhost:{PORT} in your browser\n")
     try:
+        server.start()
         server.serve_forever()
     except KeyboardInterrupt:
         print("\n\nServer stopped.")
