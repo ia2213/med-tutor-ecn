@@ -316,6 +316,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         model: 'auto/best-chat',
+                        stream: false,
                         messages: [
                             { role: 'system', content: getSystemPrompt() },
                             { role: 'user', content: (bookContext ? `CONTEXTE DU LIVRE:\n${bookContext}\n\n---\n\nQUESTION: ${message}` : message) }
