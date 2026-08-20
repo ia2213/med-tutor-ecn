@@ -149,17 +149,31 @@
         async function testConnection() {
             const b = document.getElementById('statusBackend');
             const o = document.getElementById('statusOmni');
+            
+            console.log('[TEST] Starting connection test...');
+            console.log('[TEST] API base:', API);
+            
             try {
-                // Test backend
+                // Test backend with debug
+                console.log('[TEST] Fetching /api/health...');
                 const r = await fetch(`${API}/api/health`, { 
                     method: 'GET',
-                    headers: { 'Accept': 'application/json' }
+                    headers: { 'Accept': 'application/json' },
+                    mode: 'cors',
+                    cache: 'no-cache'
                 });
-                const text = await r.text();
-                console.log('Backend response:', text);
+                console.log('[TEST] Response status:', r.status);
+                console.log('[TEST] Response headers:', Object.fromEntries(r.headers.entries()));
                 
-                if (!r.ok || !text.includes('"status"')) {
-                    throw new Error(`Bad response: ${text.substring(0, 100)}`);
+                const text = await r.text();
+                console.log('[TEST] Response text:', text.substring(0, 200));
+                
+                if (!r.ok) {
+                    throw new Error(`HTTP ${r.status}: ${text.substring(0, 100)}`);
+                }
+                
+                if (!text.includes('"status"')) {
+                    throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
                 }
                 
                 const d = JSON.parse(text);
@@ -170,7 +184,7 @@
                 o.className = d.omniroute ? 'status-pill status-ok' : 'status-pill status-err';
                 
             } catch (e) {
-                console.error('Connection test failed:', e);
+                console.error('[TEST] Connection test failed:', e);
                 b.textContent = `❌ Backend: ${e.message}`;
                 b.className = 'status-pill status-err';
                 o.textContent = `⏳ OmniRoute: vérification...`;
