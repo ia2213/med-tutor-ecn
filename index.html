@@ -282,7 +282,7 @@
             text.textContent = `📄 Extraction de TOUTES les pages... (patientez)`;
             
             try {
-                const r = await fetch(`${API}/api/upload`, { method: 'POST', body: formData });
+                const r = await fetch(`${API}/api/upload?_t=${Date.now()}`, { method: 'POST', body: formData, cache: 'no-store' });
                 const d = await r.json();
                 
                 if (d.success) {
