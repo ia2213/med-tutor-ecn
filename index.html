@@ -11,16 +11,20 @@
         .header h1 { font-size: 2em; margin-bottom: 10px; }
         .header p { opacity: 0.9; }
         .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-        
-        /* Upload Section */
+
+        .status-bar { display: flex; justify-content: center; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
+        .status-pill { padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; }
+        .status-ok { background: #d4edda; color: #155724; }
+        .status-err { background: #f8d7da; color: #721c24; }
+        .status-wait { background: #fff3cd; color: #856404; }
+
         .upload-section { background: white; border-radius: 12px; padding: 30px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .upload-area { border: 2px dashed #dadce0; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; }
         .upload-area:hover { border-color: #1a73e8; background: #f8f9fa; }
         .upload-icon { font-size: 3em; margin-bottom: 15px; }
         .upload-text h3 { margin-bottom: 10px; color: #202124; }
         .upload-text p { color: #5f6368; }
-        
-        /* Chat Section */
+
         .chat-section { background: white; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e8eaed; }
         .chat-messages { height: 400px; overflow-y: auto; padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 15px; }
@@ -34,8 +38,7 @@
         .send-btn { padding: 12px 24px; background: #1a73e8; color: white; border: none; border-radius: 24px; font-size: 1em; font-weight: 600; cursor: pointer; }
         .send-btn:hover { background: #1557b0; }
         .send-btn:disabled { background: #dadce0; cursor: not-allowed; }
-        
-        /* Presets */
+
         .presets-section { background: white; border-radius: 12px; padding: 25px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .presets-section h2 { margin-bottom: 20px; color: #202124; }
         .presets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
@@ -45,10 +48,10 @@
         .preset-icon { font-size: 1.8em; margin-bottom: 8px; }
         .preset-name { font-weight: 600; color: #202124; margin-bottom: 4px; }
         .preset-desc { font-size: 0.75em; color: #5f6368; }
-        
+
         .footer { text-align: center; padding: 30px; color: #5f6368; }
         .footer a { color: #1a73e8; }
-        
+
         @media (max-width: 768px) {
             .header h1 { font-size: 1.5em; }
             .chat-messages { height: 300px; }
@@ -59,10 +62,16 @@
 <body>
     <div class="header">
         <h1>📚 MedTutor ECN</h1>
-        <p>Tuteur médical IA gratuit - Propulsé par OmniRoute</p>
+        <p>Tuteur médical IA gratuit — Propulsé par OmniRoute</p>
     </div>
-    
+
     <div class="container">
+        <!-- Status -->
+        <div class="status-bar" id="statusBar">
+            <span class="status-pill status-wait" id="statusOmni">⏳ OmniRoute: vérification...</span>
+            <span class="status-pill status-wait" id="statusPdf">📄 PDF: aucun chargé</span>
+        </div>
+
         <!-- Upload Section -->
         <div class="upload-section">
             <div class="upload-area" id="uploadArea">
@@ -74,17 +83,19 @@
                 <input type="file" id="fileInput" accept=".pdf" style="display: none;">
             </div>
         </div>
-        
+
         <!-- Chat Section -->
-        <div class="chat-section" id="chatSection" style="display: none;">
+        <div class="chat-section" id="chatSection">
             <div class="chat-header">
-                <h3>💬 Chat avec votre livre</h3>
-                <span id="presetBadge" style="display: none; background: #1a73e8; color: white; padding: 5px 12px; border-radius: 12px; font-size: 0.85em;"></span>
+                <h3>💬 Chat médical</h3>
+                <span id="presetBadge" style="display:none; background:#1a73e8; color:white; padding:5px 12px; border-radius:12px; font-size:0.85em;"></span>
             </div>
             <div class="chat-messages" id="chatMessages">
                 <div class="message system">
-                    🎉 Chargez votre livre de médecine et posez-moi vos questions !<br><br>
-                    💡 <strong>Astuce:</strong> Sélectionnez une spécialité ci-dessous pour un tutorat personnalisé.
+                    🎉 Bienvenue sur MedTutor ECN !<br><br>
+                    📄 Uploadez un PDF et sélectionnez une spécialité.<br>
+                    💬 Posez ensuite vos questions médicales.<br><br>
+                    ⚙️ Nécessite OmniRoute en local sur le port 20128.
                 </div>
             </div>
             <div class="chat-input-area">
@@ -92,7 +103,7 @@
                 <button class="send-btn" id="sendBtn" onclick="sendMessage()">Envoyer</button>
             </div>
         </div>
-        
+
         <!-- Presets Section -->
         <div class="presets-section">
             <h2>🎯 Spécialités ECN R2C</h2>
@@ -180,157 +191,174 @@
             </div>
         </div>
     </div>
-    
+
     <div class="footer">
-        <p>Propulsé par <a href="https://github.com/HKUDS/DeepTutor" target="_blank">DeepTutor</a> + <a href="https://github.com/virgiliojr94/book-to-skill" target="_blank">book-to-skill</a></p>
+        <p>Propulsé par <a href="https://github.com/HKUDS/DeepTutor" target="_blank">DeepTutor</a> + <a href="https://github.com/virgiliojr94/book-to-skill" target="_blank">book-to-skill</a> + <strong>OmniRoute</strong></p>
         <p>ECN R2C France • 2025</p>
     </div>
-    
+
     <script>
         let bookContext = '';
+        let bookText = '';
         let selectedPreset = '';
         let isProcessing = false;
-        
-        // Upload handling
+
+        // === CHECK OMNIROUTE STATUS ===
+        async function checkOmniRoute() {
+            const el = document.getElementById('statusOmni');
+            try {
+                const r = await fetch('http://127.0.0.1:20128/v1/models', { method: 'GET' });
+                if (r.ok) {
+                    const d = await r.json();
+                    const count = d.data ? d.data.length : 0;
+                    el.textContent = `✅ OmniRoute: connecté (${count} modèles)`;
+                    el.className = 'status-pill status-ok';
+                } else {
+                    el.textContent = '❌ OmniRoute: erreur de réponse';
+                    el.className = 'status-pill status-err';
+                }
+            } catch (e) {
+                el.textContent = '❌ OmniRoute: indisponible (démarrez-le)';
+                el.className = 'status-pill status-err';
+            }
+        }
+        checkOmniRoute();
+        setInterval(checkOmniRoute, 10000);
+
+        // === PDF HANDLING ===
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
-        const chatSection = document.getElementById('chatSection');
-        
+
         uploadArea.addEventListener('click', () => fileInput.click());
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#1a73e8';
-            uploadArea.style.background = '#e8f0fe';
-        });
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.borderColor = '#dadce0';
-            uploadArea.style.background = '';
-        });
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#1a73e8'; });
+        uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = '#dadce0'; });
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.style.borderColor = '#dadce0';
-            uploadArea.style.background = '';
             const file = e.dataTransfer.files[0];
-            if (file && file.type === 'application/pdf') {
-                processPDF(file);
-            }
+            if (file && file.type === 'application/pdf') processPDF(file);
         });
         fileInput.addEventListener('change', (e) => {
-            if (e.target.files[0]) {
-                processPDF(e.target.files[0]);
-            }
+            if (e.target.files[0]) processPDF(e.target.files[0]);
         });
-        
+
         async function processPDF(file) {
-            uploadArea.innerHTML = `
-                <div class="upload-icon">⏳</div>
-                <div class="upload-text">
-                    <h3>Analyse en cours...</h3>
-                    <p>Extraction du texte du PDF</p>
-                </div>
-            `;
-            
-            // Simple simulation
-            await new Promise(r => setTimeout(r, 1500));
-            
-            bookContext = `# Livre médical: ${file.name}\n\nCe livre contient des informations médicales complètes.\n\n## Principaux thèmes:\n- Cardiologie et pathologies cardiovasculaires\n- Neurologie et troubles du système nerveux\n- Pneumologie et maladies respiratoires\n- Gastro-entérologie\n- Médecine générale\n\n---`;
-            
-            uploadArea.innerHTML = `
-                <div class="upload-icon">✅</div>
-                <div class="upload-text">
-                    <h3>${file.name}</h3>
-                    <p>Cliquez pour changer de fichier</p>
-                </div>
-            `;
-            
-            chatSection.style.display = 'block';
-            addMessage('system', `📚 Livre "${file.name}" chargé !\n\n💡 Posez vos questions sur le contenu.`);
+            const statusPdf = document.getElementById('statusPdf');
+            uploadArea.innerHTML = `<div class="upload-icon">⏳</div><div class="upload-text"><h3>Analyse de ${file.name}...</h3></div>`;
+
+            try {
+                // Load PDF.js from CDN
+                const pdfjsLib = await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
+
+                let fullText = '';
+                const pagesToRead = Math.min(pdf.numPages, 50);
+
+                for (let i = 1; i <= pagesToRead; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    fullText += content.items.map(item => item.str || '').join(' ') + '\n\n';
+                }
+
+                bookText = fullText;
+                bookContext = `Extrait du livre "${file.name}" (${pagesToRead}/${pdf.numPages} pages analysées):\n\n${fullText.substring(0, 6000)}`;
+
+                uploadArea.innerHTML = `<div class="upload-icon">✅</div><div class="upload-text"><h3>${file.name}</h3><p>${pagesToRead} pages extraites — ${fullText.length.toLocaleString()} caractères</p></div>`;
+                statusPdf.textContent = `📄 PDF: ${file.name} (${pagesToRead} pages)`;
+                statusPdf.className = 'status-pill status-ok';
+
+                addMessage('system', `📚 "${file.name}" chargé ! ${pagesToRead} pages analysées.\n\nPosez vos questions sur le contenu !`);
+            } catch (err) {
+                uploadArea.innerHTML = `<div class="upload-icon">❌</div><div class="upload-text"><h3>Erreur PDF</h3><p>${err.message}</p></div>`;
+                statusPdf.textContent = '📄 PDF: erreur';
+                statusPdf.className = 'status-pill status-err';
+            }
         }
-        
+
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                if (document.querySelector(`script[src="${src}"]`)) { resolve(pdfjsLib || window.pdfjsLib); return; }
+                const s = document.createElement('script');
+                s.src = src;
+                s.onload = () => resolve(window.pdfjsLib);
+                s.onerror = reject;
+                document.head.appendChild(s);
+            });
+        }
+
+        // === PRESETS ===
         function selectPreset(element, presetId) {
             document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
             element.classList.add('selected');
             selectedPreset = presetId;
-            
             const badge = document.getElementById('presetBadge');
             badge.style.display = 'block';
             badge.textContent = element.querySelector('.preset-name').textContent;
         }
-        
+
+        // === CHAT ===
         async function sendMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
-            
             if (!message || isProcessing) return;
-            
+
             isProcessing = true;
             input.value = '';
             addMessage('user', message);
-            
-            const systemPrompt = getSystemPrompt();
-            const context = bookContext ? `\n\n## Contexte du livre:\n${bookContext.substring(0, 2000)}` : '';
-            
-            addMessage('ai', '💭 *Analyse en cours...*');
-            
+            addMessage('ai', '💭 *Analyse en cours via OmniRoute...*');
+
             try {
-                const response = await queryAI(message, systemPrompt, context);
+                const response = await fetch('http://127.0.0.1:20128/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'auto/best-chat',
+                        messages: [
+                            { role: 'system', content: getSystemPrompt() },
+                            { role: 'user', content: (bookContext ? `CONTEXTE DU LIVRE:\n${bookContext}\n\n---\n\nQUESTION: ${message}` : message) }
+                        ],
+                        max_tokens: 2000,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
                 removeLastMessage();
-                addMessage('ai', response);
+                addMessage('ai', data.choices[0].message.content);
             } catch (error) {
                 removeLastMessage();
-                addMessage('system', `❌ Erreur: ${error.message}`);
+                addMessage('system', `❌ Erreur: ${error.message}\n\n💡 Vérifiez qu'OmniRoute est lancé sur le port 20128.`);
             } finally {
                 isProcessing = false;
             }
         }
-        
+
         function getSystemPrompt() {
             const prompts = {
-                cardio: "Tu es un tuteur médical spécialisé en cardiologie pour l'ECN français. Réponds de façon pédagogique avec des algorithmes décisionnels.",
-                endo: "Tu es un tuteur médical spécialisé en endocrinologie pour l'ECN français. Réponds avec des arbres décisionnels.",
-                neuro: "Tu es un tuteur médical spécialisé en neurologie pour l'ECN français. Réponds avec des localisations anatomiques.",
-                pnea: "Tu es un tuteur médical spécialisé en pneumologie pour l'ECN français. Réponds avec des algorithmes thérapeutiques.",
-                gastro: "Tu es un tuteur médical spécialisé en gastro-entérologie pour l'ECN français. Réponds avec des scores pronostiques.",
-                onco: "Tu es un tuteur médical spécialisé en oncologie pour l'ECN français. Réponds avec des stades et protocoles.",
-                infect: "Tu es un tuteur médical spécialisé en maladies infectieuses pour l'ECN français. Réponds avec des antibiothérapies.",
-                rehab: "Tu es un tuteur médical spécialisé en rhumatologie pour l'ECN français. Réponds avec des critères diagnostiques.",
-                nephro: "Tu es un tuteur médical spécialisé en néphrologie pour l'ECN français. Réponds avec des stades d'IRC.",
-                hemato: "Tu es un tuteur médical spécialisé en hématologie pour l'ECN français. Réponds avec des paramètres biologiques.",
-                psy: "Tu es un tuteur médical spécialisé en psychiatrie pour l'ECN français. Réponds avec des critères CIM-10.",
-                pedi: "Tu es un tuteur médical spécialisé en pédiatrie pour l'ECN français. Réponds avec des courbes de croissance.",
-                gyn: "Tu es un tuteur médical spécialisé en gynécologie-obstétrique pour l'ECN français. Réponds avec des calendriers prénataux.",
-                urg: "Tu es un tuteur médical spécialisé en urgences et réanimation pour l'ECN français. Réponds avec des algorithmes SFC.",
-                pharma: "Tu es un tuteur médical spécialisé en pharmacologie pour l'ECN français. Réponds avec des mécanismes d'action.",
-                bio: "Tu es un tuteur médical spécialisé en biologie médicale pour l'ECN français. Réponds avec des valeurs normales."
+                cardio: "Tu es un tuteur médical spécialisé en cardiologie pour l'ECN français. Tu donnes des réponses pédagogiques avec algorithmes décisionnels, scores (NYHA, KILLIP, CHA₂DS₂-VASc), et critères UGFR. Réponds toujours en français.",
+                endo: "Tu es un tuteur médical spécialisé en endocrinologie pour l'ECN français. Tu donnes des arbres décisionnels, seuils biologiques, et protocoles thérapeutiques. Réponds en français.",
+                neuro: "Tu es un tuteur médical spécialisé en neurologie pour l'ECN français. Tu donnes des scores (NIHSS, Glasgow, GCS), des localisations anatomiques, et des algorithmes. Réponds en français.",
+                pnea: "Tu es un tuteur médical spécialisé en pneumologie pour l'ECN français. Tu donnes des algorithmes thérapeutiques, critères de gravité BPCO/asthme, et gaz du sang. Réponds en français.",
+                gastro: "Tu es un tuteur médical spécialisé en gastro-entérologie pour l'ECN français. Tu donnes des scores (Child-Pugh, MELD, METAVIR), et algorithmes diagnostiques. Réponds en français.",
+                onco: "Tu es un tuteur médical spécialisé en oncologie pour l'ECN français. Tu donnes des stades TNM, protocoles, et signes d'alerte. Réponds en français.",
+                infect: "Tu es un tuteur médical spécialisé en maladies infectieuses pour l'ECN français. Tu donnes des algorithmes antibiothérapie, critères de sepsis, et prophylaxies. Réponds en français.",
+                rehab: "Tu es un tuteur médical spécialisé en rhumatologie pour l'ECN français. Tu donnes des critères diagnostiques (ACR/EULAR), scores DAS28. Réponds en français.",
+                nephro: "Tu es un tuteur médical spécialisé en néphrologie pour l'ECN français. Tu donnes les stades DFG, indications de dialyse, et néphrotoxicité. Réponds en français.",
+                hemato: "Tu es un tuteur médical spécialisé en hématologie pour l'ECN français. Tu donnes des arbres diagnostiques, paramètres biologiques, et transplantations. Réponds en français.",
+                psy: "Tu es un tuteur médical spécialisé en psychiatrie pour l'ECN français. Tu donnes des critères CIM-10/DSM-5, échelles, et algorithmes thérapeutiques. Réponds en français.",
+                pedi: "Tu es un tuteur médical spécialisé en pédiatrie pour l'ECN français. Tu donnes des courbes de croissance, posologies pédiatriques, et urgences. Réponds en français.",
+                gyn: "Tu es un tuteur médical spécialisé en gynécologie-obstétrique pour l'ECN français. Tu donnes des calendriers prénataux, scores Bishop, et urgences obstétricales. Réponds en français.",
+                urg: "Tu es un tuteur médical spécialisé en urgences et réanimation pour l'ECN français. Tu donnes des algorithmes SFC, SCORE-APACHE, et protocoles ABCDE. Réponds en français.",
+                pharma: "Tu es un tuteur médical spécialisé en pharmacologie pour l'ECN français. Tu donnes mécanismes d'action, interactions, posologies, et effets indésirables. Réponds en français.",
+                bio: "Tu es un tuteur médical spécialisé en biologie médicale pour l'ECN français. Tu donnes des valeurs normales, sensibilité/spécificité, et interprétations. Réponds en français."
             };
-            return prompts[selectedPreset] || "Tu es un tuteur médical pour la préparation à l'ECN français. Réponds de façon pédagogique.";
+            return prompts[selectedPreset] || "Tu es un tuteur médical expert pour la préparation à l'ECN français (R2C). Tu donnes des réponses pédagogiques, structurées, avec des points clés, des mnémotechniques, et des tableaux. Réponds toujours en français.";
         }
-        
-        async function queryAI(message, systemPrompt, context) {
-            // Use OmniRoute local API (free, no key needed)
-            const response = await fetch('http://127.0.0.1:20128/v1/chat/completions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: 'auto/best-chat',
-                    messages: [
-                        { role: 'system', content: systemPrompt },
-                        { role: 'user', content: message + context }
-                    ],
-                    max_tokens: 1500,
-                    temperature: 0.7
-                })
-            });
-            
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({}));
-                throw new Error(error.error?.message || `HTTP ${response.status}`);
-            }
-            
-            const data = await response.json();
-            return data.choices[0].message.content;
-        }
-        
+
         function addMessage(role, content) {
             const messages = document.getElementById('chatMessages');
             const div = document.createElement('div');
@@ -339,19 +367,14 @@
             messages.appendChild(div);
             messages.scrollTop = messages.scrollHeight;
         }
-        
+
         function removeLastMessage() {
             const messages = document.getElementById('chatMessages');
-            if (messages.lastChild) {
-                messages.removeChild(messages.lastChild);
-            }
+            if (messages.lastChild) messages.removeChild(messages.lastChild);
         }
-        
+
         document.getElementById('chatInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
         });
     </script>
 </body>
