@@ -198,9 +198,10 @@
         // === LOAD BOOKS ===
         async function loadBooks() {
             try {
-                const r = await fetch(`${API}/api/books`, { 
+                const r = await fetch(`${API}/api/books?_t=${Date.now()}`, { 
                     method: 'GET',
-                    headers: { 'Accept': 'application/json' }
+                    headers: { 'Accept': 'application/json' },
+                    cache: 'no-store'
                 });
                 const text = await r.text();
                 if (!text.includes('"books"')) throw new Error(text);
@@ -245,7 +246,10 @@
 
         async function deleteBook(bookId) {
             if (!confirm('Supprimer ce livre ?')) return;
-            await fetch(`${API}/api/books/${bookId}`, { method: 'DELETE' });
+            await fetch(`${API}/api/books/${bookId}?_t=${Date.now()}`, { 
+                method: 'DELETE',
+                cache: 'no-store'
+            });
             loadBooks();
         }
 
@@ -320,9 +324,10 @@
             addMessage('ai', '💭 *Analyse en cours...*');
             
             try {
-                const r = await fetch(`${API}/api/chat`, {
+                const r = await fetch(`${API}/api/chat?_t=${Date.now()}`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    cache: 'no-store',
                     body: JSON.stringify({ bookId: selectedBookId || undefined, message, speciality: selectedPreset || undefined })
                 });
                 const d = await r.json();
