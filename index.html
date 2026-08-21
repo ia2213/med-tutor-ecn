@@ -152,12 +152,12 @@
             
             console.log('[TEST] Starting connection test...');
             console.log('[TEST] API base:', API);
+            console.log('[TEST] Using 127.0.0.1 explicitly...');
             
             try {
-                // Force no-cache by adding timestamp
+                // Force IPv4 by using 127.0.0.1
                 const timestamp = Date.now();
-                console.log('[TEST] Fetching /api/health?_t=' + timestamp + '...');
-                const r = await fetch(`${API}/api/health?_t=${timestamp}`, { 
+                const r = await fetch(`http://127.0.0.1:8765/api/health?_t=${timestamp}`, { 
                     method: 'GET',
                     headers: { 'Accept': 'application/json' },
                     mode: 'cors',
@@ -198,7 +198,7 @@
         // === LOAD BOOKS ===
         async function loadBooks() {
             try {
-                const r = await fetch(`${API}/api/books?_t=${Date.now()}`, { 
+                const r = await fetch(`http://127.0.0.1:8765/api/books?_t=${Date.now()}`, {
                     method: 'GET',
                     headers: { 'Accept': 'application/json' },
                     cache: 'no-store'
@@ -246,7 +246,7 @@
 
         async function deleteBook(bookId) {
             if (!confirm('Supprimer ce livre ?')) return;
-            await fetch(`${API}/api/books/${bookId}?_t=${Date.now()}`, { 
+            await fetch(`http://127.0.0.1:8765/api/books/${bookId}?_t=${Date.now()}`, {
                 method: 'DELETE',
                 cache: 'no-store'
             });
@@ -282,7 +282,7 @@
             text.textContent = `📄 Extraction de TOUTES les pages... (patientez)`;
             
             try {
-                const r = await fetch(`${API}/api/upload?_t=${Date.now()}`, { method: 'POST', body: formData, cache: 'no-store' });
+                const r = await fetch(`http://127.0.0.1:8765/api/upload?_t=${Date.now()}`, { method: 'POST', body: formData, cache: 'no-store' });
                 const d = await r.json();
                 
                 if (d.success) {
@@ -324,7 +324,7 @@
             addMessage('ai', '💭 *Analyse en cours...*');
             
             try {
-                const r = await fetch(`${API}/api/chat?_t=${Date.now()}`, {
+                const r = await fetch(`http://127.0.0.1:8765/api/chat?_t=${Date.now()}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     cache: 'no-store',
