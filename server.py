@@ -233,7 +233,7 @@ class MedTutorHandler(SimpleHTTPRequestHandler):
         try:
             import urllib.request
             req = urllib.request.Request(f"{OMNIROUTE_URL}/v1/models")
-            with urllib.request.urlopen(req, timeout=20) as resp:
+            with urllib.request.urlopen(req, timeout=45) as resp:
                 if resp.status == 200:
                     omni_ok = True
                     _omni_healthy = True
