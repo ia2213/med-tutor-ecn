@@ -226,8 +226,20 @@ class MedTutorHandler(SimpleHTTPRequestHandler):
         self._json_response({"error": "Not found"}, 404)
     
     def _health(self):
-        # Vérifier OmniRoute (avec cache)
-        omni_ok = check_omniroute()
+        # Vérifier OmniRoute (sans cache pour le health check)
+        import time
+        global _omni_healthy, _omni_last_check
+        omni_ok = False
+        try:
+            import urllib.request
+            req = urllib.request.Request(f"{OMNIROUTE_URL}/v1/models")
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                if resp.status == 200:
+                    omni_ok = True
+                    _omni_healthy = True
+                    _omni_last_check = time.time()
+        except Exception:
+            pass
         
         self._json_response({
             "status": "ok",
