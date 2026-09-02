@@ -23,6 +23,30 @@ OMNIROUTE_URL = f"http://127.0.0.1:{OMNIROUTE_PORT}"
 BOOKS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "books")
 MAX_PDF_SIZE = 100 * 1024 * 1024  # 100MB
 
+# Cache OmniRoute health status
+_omni_healthy = None
+_omni_last_check = 0
+
+def check_omniroute():
+    """Check if OmniRoute is available (cache result for 30s)."""
+    global _omni_healthy, _omni_last_check
+    import time
+    now = time.time()
+    if now - _omni_last_check < 30 and _omni_healthy is not None:
+        return _omni_healthy
+    try:
+        import urllib.request
+        req = urllib.request.Request(f"{OMNIROUTE_URL}/v1/models")
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            if resp.status == 200:
+                _omni_healthy = True
+            else:
+                _omni_healthy = False
+    except Exception:
+        _omni_healthy = False
+    _omni_last_check = now
+    return _omni_healthy
+
 # === SPécialités ECN ===
 SPECIALTIES = {
     "cardio": {"name": "Cardiologie", "icon": "❤️", "prompt": "Tu es un professeur de cardiologie pour étudiants en médecine français préparant l'ECN/R2C. Réponds de manière pédagogique, structurée, avec les points clés à retenir pour l'examen. Utilise un français médical précis."},
@@ -132,15 +156,14 @@ def call_omniroute(messages, max_tokens=2000):
         "max_tokens": max_tokens,
     }).encode("utf-8")
     
-    req = urllib.request.Request(
-        f"{OMNIROUTE_URL}/v1/chat/completions",
-        data=body,
-        headers={"Content-Type": "application/json"},
-        method="POST"
-    )
-    
     try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        req = urllib.request.Request(
+            f"{OMNIROUTE_URL}/v1/chat/completions",
+            data=body,
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=120) as resp:
             data = json.loads(resp.read())
             return data["choices"][0]["message"]["content"]
     except urllib.error.URLError as e:
@@ -188,16 +211,8 @@ class MedTutorHandler(SimpleHTTPRequestHandler):
         self._json_response({"error": "Not found"}, 404)
     
     def _health(self):
-        # Vérifier OmniRoute
-        omni_ok = False
-        try:
-            import urllib.request
-            req = urllib.request.Request(f"{OMNIROUTE_URL}/v1/models")
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                if resp.status == 200:
-                    omni_ok = True
-        except Exception:
-            pass
+        # Vérifier OmniRoute (avec cache)
+        omni_ok = check_omniroute()
         
         self._json_response({
             "status": "ok",
