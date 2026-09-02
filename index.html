@@ -368,13 +368,6 @@
                 } else {
                     addMessage('system', `❌ Erreur: ${err.message}\n\n💡 Vérifiez qu'OmniRoute tourne sur le port 20128.`);
                 }
-            } catch (err) {
-                removeLastMessage();
-                if (isGitHubPages()) {
-                    addMessage('system', `❌ Erreur: Le chat nécessite le server local.\n\n💡 Lancez: python server.py puis ouvrez http://localhost:8765`);
-                } else {
-                    addMessage('system', `❌ Erreur: ${err.message}\n\n💡 Vérifiez qu'OmniRoute tourne sur le port 20128.`);
-                }
             } finally {
                 isProcessing = false;
             }
