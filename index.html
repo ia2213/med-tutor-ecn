@@ -152,29 +152,58 @@
         let selectedBookId = null;
         let isProcessing = false;
 
+        // === API HELPERS ===
+        function isGitHubPages() {
+            return window.location.hostname.includes('github.io');
+        }
+        async function apiFetch(url, options = {}) {
+            const r = await fetch(url, { ...options, cache: 'no-store' });
+            const text = await r.text();
+            try {
+                return { ok: r.ok, status: r.status, data: JSON.parse(text) };
+            } catch {
+                return { ok: false, status: r.status, error: text.substring(0, 200) };
+            }
+        }
+
         // === TEST API CONNECTION ===
         async function testConnection() {
             const b = document.getElementById('statusBackend');
             const o = document.getElementById('statusOmni');
-            
+            const chatSection = document.querySelector('.chat-section');
+
+            if (isGitHubPages()) {
+                b.textContent = '⚠️ GitHub Pages: limitation';
+                b.className = 'status-pill status-wait';
+                o.textContent = '⚠️ OmniRoute: requis localement';
+                o.className = 'status-pill status-wait';
+                if (chatSection) {
+                    chatSection.querySelector('p, .message.system')?.remove();
+                    const msg = document.createElement('div');
+                    msg.className = 'message system';
+                    msg.innerHTML = '⚠️ <strong>Mode GitHub Pages détecté</strong><br><br>' +
+                        'Le chat IA nécessite de lancer le server localement.<br><br>' +
+                        '<code>python server.py</code> puis ouvrez <strong>http://localhost:8765</strong>';
+                    document.getElementById('chatMessages').appendChild(msg);
+                }
+                return;
+            }
+
             try {
                 const timestamp = Date.now();
-                const r = await fetch(`/api/health?_t=${timestamp}`, { 
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' },
-                    cache: 'no-store'
-                });
-                
-                const text = await r.text();
-                if (!text.includes('"status"')) throw new Error('Réponse invalide');
-                
-                const d = JSON.parse(text);
+                const result = await apiFetch(`/api/health?_t=${timestamp}`);
+
+                if (!result.ok || !result.data?.status) {
+                    throw new Error(result.error || 'Réponse invalide');
+                }
+
+                const d = result.data;
                 b.textContent = `✅ Backend: connecté (v${d.version || '3.0'})`;
                 b.className = 'status-pill status-ok';
-                
-                o.textContent = d.omniroute ? '✅ OmniRoute: connecté' : '❌ OmniRoute: indisponible';
-                o.className = d.omniroute ? 'status-pill status-ok' : 'status-pill status-err';
-                
+
+                o.textContent = d.omniroute ? '✅ OmniRoute: connecté' : '⏳ OmniRoute: démarrage...';
+                o.className = d.omniroute ? 'status-pill status-ok' : 'status-pill status-wait';
+
             } catch (e) {
                 b.textContent = `❌ Backend: ${e.message}`;
                 b.className = 'status-pill status-err';
@@ -188,18 +217,16 @@
         // === LOAD BOOKS ===
         async function loadBooks() {
             try {
-                const r = await fetch(`/api/books?_t=${Date.now()}`, {
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' },
-                    cache: 'no-store'
-                });
-                const d = await r.json();
-                books = d.books || [];
+                const result = await apiFetch(`/api/books?_t=${Date.now()}`);
+                if (!result.ok) throw new Error(result.error || 'Erreur chargement');
+                books = result.data?.books || [];
                 renderBooks();
             } catch (e) {
                 console.error('loadBooks error:', e);
-                const list = document.getElementById('booksList');
-                list.innerHTML = `<p style="color:#dc3545">❌ Erreur chargement: ${e.message}</p>`;
+                if (!isGitHubPages()) {
+                    const list = document.getElementById('booksList');
+                    list.innerHTML = `<p style="color:#dc3545">❌ Erreur chargement: ${e.message}</p>`;
+                }
             }
         }
         loadBooks();
@@ -234,11 +261,8 @@
 
         async function deleteBook(bookId) {
             if (!confirm('Supprimer ce livre ?')) return;
-            await fetch(`/api/books/${bookId}?_t=${Date.now()}`, {
-                method: 'DELETE',
-                cache: 'no-store'
-            });
-            loadBooks();
+            const result = await apiFetch(`/api/books/${bookId}?_t=${Date.now()}`, { method: 'DELETE' });
+            if (result.ok) loadBooks();
         }
 
         // === UPLOAD ===
@@ -272,23 +296,32 @@
             text.textContent = `📄 Extraction de TOUTES les pages... (patientez)`;
             
             try {
-                const r = await fetch(`/api/upload?_t=${Date.now()}`, { method: 'POST', body: formData, cache: 'no-store' });
-                const d = await r.json();
-                
-                if (d.success) {
-                    fill.style.width = '100%';
-                    text.textContent = `✅ ${d.title}: ${d.extractedPages}/${d.totalPages} pages, ${(d.totalChars || 0).toLocaleString()} caractères, ${d.chunkCount} chunks`;
-                    uploadArea.innerHTML = `<div class="upload-icon">✅</div><h3>${d.title}</h3><p>${d.extractedPages} pages extraites</p><p style="color:#5f6368;font-size:0.9em">Cliquez pour upload un autre livre</p>`;
-                    loadBooks();
-                } else {
-                    throw new Error(d.error || 'Upload failed');
+                const result = await apiFetch(`/api/upload?_t=${Date.now()}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!result.ok || !result.data?.success) {
+                    throw new Error(result.data?.error || result.error || 'Upload failed');
                 }
+
+                const d = result.data;
+                fill.style.width = '100%';
+                text.textContent = `✅ ${d.title}: ${d.extractedPages}/${d.totalPages} pages, ${(d.totalChars || 0).toLocaleString()} caractères, ${d.chunkCount} chunks`;
+                uploadArea.innerHTML = `<div class="upload-icon">✅</div><h3>${d.title}</h3><p>${d.extractedPages} pages extraites</p><p style="color:#5f6368;font-size:0.9em">Cliquez pour upload un autre livre</p>`;
+                loadBooks();
             } catch (err) {
                 fill.style.width = '100%';
                 text.textContent = `❌ Erreur: ${err.message}`;
-                uploadArea.innerHTML = `<div class="upload-icon">❌</div><h3>Erreur</h3><p>${err.message}</p><p style="color:#5f6368;font-size:0.9em">Vérifiez que pdftotext est installé</p>`;
+                uploadArea.innerHTML = `<div class="upload-icon">❌</div><h3>Erreur</h3><p>${err.message}</p>`;
                 uploadError.style.display = 'block';
-                uploadError.textContent = `💡 Astuce: installez poppler (pdftotext) pour l'extraction PDF. Sur Windows: choco install poppler`;
+                if (isGitHubPages()) {
+                    uploadError.textContent = '💡 Le site est sur GitHub Pages (statique). Pour upload + chat, lancez: python server.py';
+                } else if (err.message.includes('pdftotext')) {
+                    uploadError.textContent = '💡 Astuce: installez poppler (pdftotext) pour l\'extraction PDF. Sur Windows: choco install poppler';
+                } else {
+                    uploadError.textContent = '💡 Vérifiez que le server tourne sur http://localhost:8765';
+                }
             }
             
             setTimeout(() => { progress.style.display = 'none'; }, 8000);
@@ -316,22 +349,32 @@
             addMessage('ai', '💭 *Analyse en cours...*');
             
             try {
-                const r = await fetch('/api/chat', {
+                const result = await apiFetch('/api/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    cache: 'no-store',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ bookId: selectedBookId || undefined, message, speciality: selectedPreset || undefined })
                 });
-                const d = await r.json();
+
+                if (!result.ok || !result.data?.answer) {
+                    throw new Error(result.data?.error || 'Réponse vide');
+                }
+
                 removeLastMessage();
-                if (d.answer) {
-                    addMessage('ai', d.answer);
+                addMessage('ai', result.data.answer);
+            } catch (err) {
+                removeLastMessage();
+                if (isGitHubPages()) {
+                    addMessage('system', `❌ Erreur: Le chat nécessite le server local.\n\n💡 Lancez: python server.py puis ouvrez http://localhost:8765`);
                 } else {
-                    addMessage('system', `❌ Erreur: ${d.error || 'Réponse vide'}`);
+                    addMessage('system', `❌ Erreur: ${err.message}\n\n💡 Vérifiez qu'OmniRoute tourne sur le port 20128.`);
                 }
             } catch (err) {
                 removeLastMessage();
-                addMessage('system', `❌ Erreur: ${err.message}\n\n💡 Vérifiez qu'OmniRoute tourne sur le port 20128.`);
+                if (isGitHubPages()) {
+                    addMessage('system', `❌ Erreur: Le chat nécessite le server local.\n\n💡 Lancez: python server.py puis ouvrez http://localhost:8765`);
+                } else {
+                    addMessage('system', `❌ Erreur: ${err.message}\n\n💡 Vérifiez qu'OmniRoute tourne sur le port 20128.`);
+                }
             } finally {
                 isProcessing = false;
             }
