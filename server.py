@@ -28,12 +28,27 @@ _omni_healthy = None
 _omni_last_check = 0
 
 def check_omniroute():
-    """Check if OmniRoute is available (cache result for 30s)."""
+    """Check if OmniRoute is available (cache result for 30s, but failures reset faster)."""
     global _omni_healthy, _omni_last_check
     import time
     now = time.time()
-    if now - _omni_last_check < 30 and _omni_healthy is not None:
-        return _omni_healthy
+    # If cached as healthy, return it (30s TTL)
+    if _omni_healthy is True and now - _omni_last_check < 30:
+        return True
+    # Try fresh check
+    try:
+        import urllib.request
+        req = urllib.request.Request(f"{OMNIROUTE_URL}/v1/models")
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            if resp.status == 200:
+                _omni_healthy = True
+                _omni_last_check = now
+                return True
+    except Exception:
+        pass
+    # If we get here, either failed or stale cache - do another check
+    if _omni_healthy is False and now - _omni_last_check < 5:
+        return False  # Don't spam checks
     try:
         import urllib.request
         req = urllib.request.Request(f"{OMNIROUTE_URL}/v1/models")
