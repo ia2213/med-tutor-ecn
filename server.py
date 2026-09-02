@@ -233,20 +233,14 @@ class MedTutorHandler(SimpleHTTPRequestHandler):
         try:
             import urllib.request
             req = urllib.request.Request(f"{OMNIROUTE_URL}/v1/models")
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=20) as resp:
                 if resp.status == 200:
                     omni_ok = True
                     _omni_healthy = True
                     _omni_last_check = time.time()
         except Exception:
             pass
-        
-        self._json_response({
-            "status": "ok",
-            "omniroute": omni_ok,
-            "books_count": len(self._get_books()),
-            "version": "3.0"
-        })
+        self._json_response({"status": "ok", "omniroute": omni_ok, "books_count": len(self._get_books()), "version": "3.0"})
     
     def _list_books(self):
         books = self._get_books()
