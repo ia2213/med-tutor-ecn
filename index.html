@@ -173,18 +173,20 @@
             const chatSection = document.querySelector('.chat-section');
 
             if (isGitHubPages()) {
-                b.textContent = '⚠️ GitHub Pages: limitation';
+                b.textContent = '⚠️ GitHub Pages: mode démo';
                 b.className = 'status-pill status-wait';
                 o.textContent = '⚠️ OmniRoute: requis localement';
                 o.className = 'status-pill status-wait';
                 if (chatSection) {
-                    chatSection.querySelector('p, .message.system')?.remove();
-                    const msg = document.createElement('div');
-                    msg.className = 'message system';
-                    msg.innerHTML = '⚠️ <strong>Mode GitHub Pages détecté</strong><br><br>' +
-                        'Le chat IA nécessite de lancer le server localement.<br><br>' +
-                        '<code>python server.py</code> puis ouvrez <strong>http://localhost:8765</strong>';
-                    document.getElementById('chatMessages').appendChild(msg);
+                    const existingMsg = chatSection.querySelector('.message.system');
+                    if (!existingMsg) {
+                        const msg = document.createElement('div');
+                        msg.className = 'message system';
+                        msg.innerHTML = '⚠️ <strong>Mode GitHub Pages détecté</strong><br><br>' +
+                            'Le chat IA nécessite de lancer le server localement.<br><br>' +
+                            '<code>python server.py</code> puis ouvrez <strong>http://localhost:8765</strong>';
+                        document.getElementById('chatMessages').appendChild(msg);
+                    }
                 }
                 return;
             }
@@ -216,6 +218,7 @@
 
         // === LOAD BOOKS ===
         async function loadBooks() {
+            if (isGitHubPages()) return;
             try {
                 const result = await apiFetch(`/api/books?_t=${Date.now()}`);
                 if (!result.ok) throw new Error(result.error || 'Erreur chargement');
@@ -223,10 +226,8 @@
                 renderBooks();
             } catch (e) {
                 console.error('loadBooks error:', e);
-                if (!isGitHubPages()) {
-                    const list = document.getElementById('booksList');
-                    list.innerHTML = `<p style="color:#dc3545">❌ Erreur chargement: ${e.message}</p>`;
-                }
+                const list = document.getElementById('booksList');
+                list.innerHTML = `<p style="color:#dc3545">❌ Erreur chargement: ${e.message}</p>`;
             }
         }
         loadBooks();
@@ -261,6 +262,7 @@
 
         async function deleteBook(bookId) {
             if (!confirm('Supprimer ce livre ?')) return;
+            if (isGitHubPages()) return;
             const result = await apiFetch(`/api/books/${bookId}?_t=${Date.now()}`, { method: 'DELETE' });
             if (result.ok) loadBooks();
         }
@@ -279,6 +281,10 @@
         fileInput.addEventListener('change', (e) => { if (e.target.files[0]) uploadPDF(e.target.files[0]); });
 
         async function uploadPDF(file) {
+            if (isGitHubPages()) {
+                alert('⚠️ Upload non disponible sur GitHub Pages.\n\n💡 Lancez le server local:\npython server.py\npuis ouvrez http://localhost:8765');
+                return;
+            }
             const progress = document.getElementById('uploadProgress');
             const fill = document.getElementById('progressFill');
             const text = document.getElementById('progressText');
@@ -339,6 +345,10 @@
 
         // === CHAT ===
         async function sendMessage() {
+            if (isGitHubPages()) {
+                alert('⚠️ Chat non disponible sur GitHub Pages.\n\n💡 Lancez le server local:\npython server.py\npuis ouvrez http://localhost:8765');
+                return;
+            }
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
             if (!message || isProcessing) return;
