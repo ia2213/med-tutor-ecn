@@ -414,15 +414,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nServer stopped.")
         server.shutdown()
-    print(f"  OmniRoute: http://localhost:{OMNIROUTE_PORT}")
-    print(f"  Books:     {BOOKS_DIR}")
-    print(f"{'='*50}")
-    print(f"\n  Open http://localhost:{PORT} in your browser\n")
-    
-    try:
-        server = DualStackServer(PORT)
-        server.start()
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print("\n\nServer stopped.")
-        server.server_close()
