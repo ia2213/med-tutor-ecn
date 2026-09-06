@@ -2,9 +2,10 @@
 """
 MedTutor ECN — Server autonome (plus besoin de Node backend)
 - Sert le frontend statique sur le port spécifié
-- Extrait les PDFs avec pdftotext
+- Extrait les PDFs avec pdftotext (taille illimitée)
 - Chat IA directement via OmniRoute (port 20128)
 - Stockage local des livres dans ./books/
+- Thread-safe: Health check ne bloque pas les autres requêtes
 """
 import sys
 import os
@@ -14,6 +15,7 @@ import shutil
 import subprocess
 import re
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+from socketserver import ThreadingMixIn
 import socket
 import threading
 from urllib.parse import urlparse, parse_qs
@@ -21,7 +23,6 @@ from urllib.parse import urlparse, parse_qs
 OMNIROUTE_PORT = 20128
 OMNIROUTE_URL = f"http://127.0.0.1:{OMNIROUTE_PORT}"
 BOOKS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "books")
-MAX_PDF_SIZE = 100 * 1024 * 1024  # 100MB
 
 # Cache OmniRoute health status
 _omni_healthy = None
@@ -91,7 +92,7 @@ def extract_pdf_text(pdf_path, book_id):
     """Extraire le texte d'un PDF avec pdftotext et le découper en chunks."""
     out_dir = os.path.join(BOOKS_DIR, book_id)
     os.makedirs(out_dir, exist_ok=True)
-    
+
     # Extraire le texte
     txt_path = os.path.join(out_dir, "text.txt")
     try:
@@ -107,15 +108,15 @@ def extract_pdf_text(pdf_path, book_id):
             )
     except Exception as e:
         return None, str(e)
-    
+
     if not os.path.exists(txt_path):
         return None, "Extraction failed"
-    
+
     with open(txt_path, "r", encoding="utf-8", errors="ignore") as f:
         full_text = f.read()
-    
+
     total_chars = len(full_text)
-    
+
     # Découper en chunks de 4000 chars max
     chunks = []
     lines = full_text.split("\n")
@@ -128,15 +129,15 @@ def extract_pdf_text(pdf_path, book_id):
             current_chunk += line + "\n"
     if current_chunk.strip():
         chunks.append(current_chunk.strip())
-    
+
     # Compter les pages (approximation)
     page_count = max(1, len(chunks) // 5)  # ~5 chunks par page en moyenne
-    
+
     # Sauvegarder les chunks
     chunks_file = os.path.join(out_dir, "chunks.json")
     with open(chunks_file, "w", encoding="utf-8") as f:
         json.dump(chunks, f, ensure_ascii=False)
-    
+
     return {
         "bookId": book_id,
         "title": os.path.basename(pdf_path).replace(".pdf", ""),
@@ -191,6 +192,10 @@ class MedTutorHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self.start_time = None
         super().__init__(*args, **kwargs)
+
+    def log_message(self, format, *args):
+        # Logs silencieux pour réduire le bruit
+        pass
     
     def do_GET(self):
         if self.path.startswith("/api/"):
@@ -273,10 +278,10 @@ class MedTutorHandler(SimpleHTTPRequestHandler):
     
     def _upload(self):
         content_length = int(self.headers.get("Content-Length", 0))
-        if content_length > MAX_PDF_SIZE:
-            self._json_response({"error": "Fichier trop volumineux (max 100MB)"}, 413)
+        if content_length == 0:
+            self._json_response({"error": "Aucun fichier reçu"}, 400)
             return
-        
+
         # Lire le fichier PDF
         pdf_data = self.rfile.read(content_length)
         
@@ -388,61 +393,27 @@ class MedTutorHandler(SimpleHTTPRequestHandler):
         pass  # Silencer les logs
 
 
-class DualStackServer:
-    def __init__(self, port):
-        self.port = port
-        self.servers = []
-        self.threads = []
-    
-    def start(self):
-        # IPv4
-        try:
-            s4 = HTTPServer(("0.0.0.0", self.port), MedTutorHandler)
-            t4 = threading.Thread(target=s4.serve_forever, daemon=True)
-            t4.start()
-            self.servers.append(s4)
-            self.threads.append(t4)
-            print(f"  IPv4: http://0.0.0.0:{self.port}")
-        except Exception as e:
-            print(f"  IPv4 failed: {e}")
-        
-        # IPv6
-        try:
-            s6 = HTTPServer(("::", self.port), MedTutorHandler)
-            s6.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
-            t6 = threading.Thread(target=s6.serve_forever, daemon=True)
-            t6.start()
-            self.servers.append(s6)
-            self.threads.append(t6)
-            print(f"  IPv6: http://[::]:{self.port}")
-        except Exception as e:
-            print(f"  IPv6 failed: {e}")
-        
-        if not self.servers:
-            raise RuntimeError("Failed to start any server")
-    
-    def serve_forever(self):
-        import time
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            for s in self.servers:
-                s.shutdown()
-    
-    def server_close(self):
-        for s in self.servers:
-            s.server_close()
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    """Server multi-threadé: health check ne bloque pas les uploads/chat."""
+    daemon_threads = True
 
 
 if __name__ == "__main__":
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8765
-    
-    print(f"\n{'='*50}")
-    print(f"  MedTutor ECN - Server Autonome v3.0")
-    print(f"{'='*50}")
-    print(f"  Frontend:  http://localhost:{PORT}")
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8765
+    server = ThreadedHTTPServer(("0.0.0.0", port), MedTutorHandler)
+    print("=" * 50)
+    print("  MedTutor ECN - Server Autonome v3.1 (Threaded)")
+    print("=" * 50)
+    print(f"  Frontend:  http://localhost:{port}")
+    print(f"  OmniRoute: http://127.0.0.1:{OMNIROUTE_PORT}")
+    print(f"  Books:     {BOOKS_DIR}")
+    print("=" * 50)
+    print(f"\n  Open http://localhost:{port} in your browser\n")
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nServer stopped.")
+        server.shutdown()
     print(f"  OmniRoute: http://localhost:{OMNIROUTE_PORT}")
     print(f"  Books:     {BOOKS_DIR}")
     print(f"{'='*50}")
