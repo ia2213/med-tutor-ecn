@@ -379,17 +379,24 @@ class MedTutorHandler(SimpleHTTPRequestHandler):
             self._json_response({"success": True})
         else:
             self._json_response({"error": "Livre non trouvé"}, 404)
-    
     def _json_response(self, data, status=200):
-        response = json.dumps(data, ensure_ascii=False).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
-        self.end_headers()
-        self.wfile.write(response)
-    
-    def log_message(self, format, *args):
+        try:
+            response = json.dumps(data, ensure_ascii=False).encode("utf-8")
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.end_headers()
+            self.wfile.write(response)
+        except (BrokenPipeError, ConnectionResetError, OSError):
+            pass  # Client disconnected
+
+    def _send_error_json(self, status, message):
+        """Send JSON error response (handles client disconnection)."""
+        try:
+            self._json_response({"error": message}, status)
+        except (BrokenPipeError, ConnectionResetError, OSError):
+            pass
         pass  # Silencer les logs
 
 
