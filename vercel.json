@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/med-scan/(.*)", "destination": "/med-scan/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
