@@ -183,4 +183,4 @@ caseSelect.addEventListener('change', (e) => {
 
 
 // Init
-loadDataset('neuro_case1');
+loadDataset('neuro_patient1');
